@@ -1,0 +1,1954 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#EDE7D9">
+<link rel="manifest" href="/manifest.json">
+<title>JOSH · Your Career Transition Agent</title>
+<meta name="description" content="JOSH · Your Career Transition Agent: an autonomous job-search dashboard with scraping, scoring, briefings, and warm-path intelligence.">
+<meta name="robots" content="noindex, nofollow">
+<meta property="og:title" content="JOSH · Your Career Transition Agent">
+<meta property="og:description" content="An autonomous executive job-search agent — dashboard, scraper, and daily briefings.">
+<meta property="og:type" content="website">
+<script defer src="/_vercel/insights/script.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy:    #B34E2A;
+    --navy2:   #8B3A1C;
+    --sage:    #5E8A56;
+    --champagne: #B34E2A;
+    --champ-dim: rgba(179,78,42,0.12);
+    --champ-dim2: rgba(179,78,42,0.05);
+    --bg:      #EDE7D9;
+    --bg2:     #E8E2D5;
+    --bg3:     #E4DDD0;
+    --border:  rgba(28,25,20,0.10);
+    --border2: rgba(28,25,20,0.18);
+    --text:    #1C1914;
+    --text2:   #5A5347;
+    --text3:   #8A8278;
+    --green:   #2d6a4f;
+    --green-dim: rgba(45,106,79,0.07);
+    --green-border: rgba(45,106,79,0.20);
+    --shadow:  0 1px 3px rgba(28,25,20,0.06);
+    --shadow-md: 0 2px 8px rgba(28,25,20,0.08);
+    --serif: 'Space Grotesk', system-ui, sans-serif;
+    --sans:  'Inter', system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html, body { min-height: 100%; background: var(--bg); color: var(--text); font-family: var(--sans); font-size: 14px; overscroll-behavior-x: none; }
+  #root { min-height: 100%; display: flex; flex-direction: column; max-width: 480px; margin: 0 auto; }
+
+  /* TOP BAR */
+  .topbar { padding: 18px 18px 14px; background: var(--sage); position: sticky; top: 0; z-index: 10; border-bottom: 1px solid rgba(28,25,20,0.15); }
+  .topbar-row { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 2px; }
+  .topbar-title { font-family: var(--serif); font-size: 26px; font-weight: 500; letter-spacing: 0.5px; color: #fff; }
+  .topbar-date { font-family: var(--sans); font-size: 11px; color: rgba(255,255,255,0.75); letter-spacing: 0.3px; }
+  .topbar-sub { font-size: 11px; color: rgba(255,255,255,0.75); margin-top: 2px; }
+  .score-link { font-family: var(--sans); font-size: 10px; color: #fff; border: 0.5px solid rgba(255,255,255,0.4); border-radius: 3px; padding: 3px 9px; cursor: pointer; background: none; letter-spacing: 0.3px; transition: all 0.15s; }
+  .score-link:hover { background: var(--champ-dim2); }
+
+  /* NAV */
+  .nav { padding: 12px 16px 8px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+  .view-toggle { display: flex; gap: 2px; background: var(--bg3); border-radius: 3px; padding: 3px; border: 1px solid var(--border); }
+  .view-btn { font-family: var(--sans); font-size: 11px; font-weight: 400; padding: 4px 11px; border-radius: 2px; border: none; background: transparent; color: var(--text2); cursor: pointer; transition: all 0.15s; letter-spacing: 0.2px; }
+  .view-btn.active { background: var(--bg2); color: var(--navy); font-weight: 500; box-shadow: none; border-bottom: 1.5px solid var(--navy); }
+
+  /* FILTERS */
+  .filters { display: flex; gap: 5px; flex-wrap: wrap; padding: 0 16px; margin-bottom: 12px; }
+  .filter-pill { font-family: var(--sans); font-size: 10px; font-weight: 400; padding: 3px 11px; border-radius: 20px; border: 1px solid var(--border2); background: var(--bg2); color: var(--text2); cursor: pointer; transition: all 0.15s; letter-spacing: 0.2px; }
+  .filter-pill.active { border-color: var(--navy); color: var(--navy); background: var(--champ-dim); font-weight: 500; }
+
+  /* STAGE TILES */
+  .stage-tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; padding: 0 16px; margin-bottom: 16px; }
+  .tile { background: var(--bg2); border: 1px solid var(--border); border-radius: 4px; padding: 10px 4px; text-align: center; cursor: pointer; transition: all 0.15s; box-shadow: none; border-bottom: 2px solid transparent; }
+  .tile:hover { border-color: var(--border2); border-bottom-color: var(--border2); }
+  .tile.active { border-color: var(--border); border-bottom: 2px solid var(--navy); background: var(--champ-dim2); }
+  .tile-num { font-family: var(--serif); font-size: 22px; font-weight: 500; color: var(--navy); line-height: 1; }
+  .tile-label { font-family: var(--sans); font-size: 8px; color: var(--text3); margin-top: 3px; line-height: 1.3; letter-spacing: 0.3px; text-transform: uppercase; }
+
+  /* PENDING QUEUE */
+  .pending-wrap { padding: 0 16px; margin-bottom: 14px; }
+  .pending-header-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+  .pending-header { font-family: var(--sans); font-size: 9px; font-weight: 500; color: var(--text3); letter-spacing: 0.8px; text-transform: uppercase; display: flex; align-items: center; gap: 8px; }
+  .pending-header::before { content: ''; display: inline-block; width: 1.2rem; height: 1px; background: var(--text3); flex-shrink: 0; }
+  .manual-add-btn { font-family: var(--sans); font-size: 10px; padding: 4px 11px; border-radius: 4px; border: 1px dashed var(--champagne); background: var(--champ-dim2); color: var(--navy2); cursor: pointer; transition: all 0.15s; letter-spacing: 0.2px; }
+  .manual-add-btn:hover { background: var(--champ-dim); border-color: var(--navy); }
+  .pending-card { background: var(--bg2); border: 1px solid var(--border); border-top: 2px solid var(--champagne); border-radius: 4px; padding: 11px 12px; margin-bottom: 6px; display: flex; align-items: flex-start; gap: 10px; box-shadow: none; }
+  /* signals are visually distinct from postings — sage, never champagne */
+  .pending-card.signal { border-top-color: var(--green); background: var(--green-dim); }
+  .signal-chip { margin-left: 7px; font-family: var(--sans); font-size: 8.5px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--green); background: rgba(45,106,79,0.10); border: 1px solid var(--green-border); border-radius: 9px; padding: 2px 6px; vertical-align: 2px; white-space: nowrap; }
+  .signal-headline { font-weight: 500 !important; }
+  .signal-thesis { font-family: var(--sans); font-size: 10.5px; line-height: 1.5; color: var(--text2); margin-top: 3px; }
+  .signal-evidence { font-family: var(--sans); font-size: 10px; color: var(--text3); margin-top: 4px; }
+  .signal-evidence a { color: var(--green); text-decoration: none; border-bottom: 1px dashed var(--green-border); }
+  .signal-note { font-family: var(--sans); font-size: 10px; font-style: italic; color: var(--text2); margin-top: 5px; }
+  .pending-info { flex: 1; }
+  .pending-company { font-family: var(--serif); font-size: 15px; font-weight: 500; color: var(--text); letter-spacing: 0.2px; }
+  .pending-role { font-family: var(--sans); font-size: 11px; color: var(--text2); margin-top: 1px; }
+  .pending-role a { color: inherit; text-decoration: none; }
+  .pending-role a:hover { text-decoration: underline; }
+  .pending-meta { font-family: var(--sans); font-size: 10px; color: var(--text3); margin-top: 4px; letter-spacing: 0.1px; }
+  .pending-score { font-family: var(--serif); font-size: 15px; font-weight: 600; color: var(--navy); }
+  .pending-btns { display: flex; flex-direction: column; gap: 4px; }
+  .pend-btn { font-family: var(--sans); font-size: 10px; padding: 4px 10px; border-radius: 4px; cursor: pointer; border: 1px solid; white-space: nowrap; transition: opacity 0.15s; letter-spacing: 0.2px; }
+  .pend-btn.yes { background: var(--champ-dim); border-color: var(--champagne); color: var(--navy); font-weight: 500; }
+  .pend-btn.no { background: transparent; border-color: var(--border2); color: var(--text3); }
+  .pend-btn:hover { opacity: 0.72; }
+  .pending-empty { font-family: var(--sans); font-size: 11px; color: var(--text3); padding: 16px; border: 1px dashed var(--border); border-radius: 8px; text-align: center; line-height: 1.6; }
+  .pending-empty strong { color: var(--text2); font-weight: 500; display: block; margin-bottom: 3px; }
+
+  /* KANBAN */
+  .kanban { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 0 16px; padding-bottom: 32px; }
+  .col-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+  .col-title { font-family: var(--sans); font-size: 9px; font-weight: 500; color: var(--text3); text-transform: uppercase; letter-spacing: 0.8px; display: flex; align-items: center; gap: 6px; }
+  .col-title::before { content: ''; display: inline-block; width: 1rem; height: 1px; background: var(--text3); flex-shrink: 0; }
+  .col-count { background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 1px 6px; font-size: 9px; color: var(--text3); }
+  .card { background: var(--bg2); border: 1px solid var(--border); border-radius: 4px; padding: 12px; margin-bottom: 7px; cursor: grab; transition: all 0.12s; position: relative; box-shadow: none; border-top: 2px solid transparent; }
+  .card:active { cursor: grabbing; }
+  .card:hover { border-color: var(--border2); border-top-color: var(--champagne); transform: none; }
+  .card.dragging { opacity: 0.3; }
+  .card.drag-over { border-color: var(--navy); }
+  .card-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 3px; }
+  .card-company { font-family: var(--serif); font-size: 14px; font-weight: 500; color: var(--text); line-height: 1.2; letter-spacing: 0.2px; }
+  .score { font-family: var(--serif); font-size: 13px; font-weight: 600; padding: 2px 6px; border-radius: 3px; flex-shrink: 0; }
+  .score.high { color: var(--navy); background: var(--champ-dim); }
+  .score.mid { color: var(--text3); background: var(--bg3); }
+  .card-role { font-family: var(--sans); font-size: 11px; color: var(--text2); margin-bottom: 7px; line-height: 1.4; }
+  .sector-tag { display: inline-block; padding: 2px 7px; font-family: var(--sans); font-size: 9px; border-radius: 2px; background: var(--bg3); border: 1px solid var(--border); color: var(--text3); margin-bottom: 7px; letter-spacing: 0.3px; text-transform: uppercase; }
+  .card-dates { display: flex; justify-content: space-between; font-size: 10px; border-top: 1px solid var(--border); padding-top: 7px; }
+  .date-label { font-family: var(--sans); font-size: 9px; color: var(--text3); margin-bottom: 1px; letter-spacing: 0.2px; text-transform: uppercase; }
+  .date-val { font-family: var(--sans); font-size: 10px; color: var(--text2); }
+  .next-action { font-family: var(--sans); font-size: 10px; color: var(--green); margin-top: 6px; }
+  .advance-btn { width: 100%; margin-top: 8px; padding: 5px; background: transparent; border: 1px solid var(--border); border-radius: 3px; color: var(--text3); font-family: var(--sans); font-size: 9px; letter-spacing: 0.3px; cursor: pointer; transition: all 0.15s; text-transform: uppercase; }
+  .advance-btn:hover { border-color: var(--navy); color: var(--navy); background: var(--champ-dim2); }
+  .card-actions { display: flex; gap: 5px; margin-top: 8px; }
+  .card-actions .advance-btn { flex: 1; margin-top: 0; }
+  .edit-btn { padding: 5px 8px; background: transparent; border: 1px solid var(--border); border-radius: 3px; color: var(--text3); font-size: 11px; cursor: pointer; transition: all 0.15s; flex-shrink: 0; }
+  .edit-btn:hover { border-color: var(--champagne); color: var(--navy); background: var(--champ-dim2); }
+  .delete-btn { padding: 5px 8px; background: transparent; border: 1px solid var(--border); border-radius: 3px; color: var(--text3); font-size: 11px; cursor: pointer; transition: all 0.15s; flex-shrink: 0; }
+  .delete-btn:hover { border-color: #dc2626; color: #dc2626; background: rgba(220,38,38,0.05); }
+
+  /* Archived column */
+  .col-archived .col-title { color: var(--text3); opacity: 0.6; }
+  .card-archived { opacity: 0.45; filter: grayscale(0.4); }
+  .card-archived:hover { opacity: 0.65; border-top-color: transparent; }
+
+  /* OVERLAY */
+  .overlay { display: none; position: fixed; inset: 0; background: rgba(26,39,68,0.45); z-index: 100; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(3px); }
+  .overlay.open { display: flex; }
+  .overlay-box { background: var(--bg2); border: 1px solid var(--border2); border-radius: 4px; padding: 22px; width: 100%; max-width: 340px; box-shadow: var(--shadow-md); border-top: 2px solid var(--navy); }
+  .overlay-title { font-family: var(--serif); font-size: 16px; font-weight: 500; color: var(--navy); margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; letter-spacing: 0.2px; }
+  .overlay-close { color: var(--text3); cursor: pointer; font-size: 18px; line-height: 1; background: none; border: none; }
+  .rubric-row { display: flex; justify-content: space-between; align-items: flex-start; padding: 8px 0; border-bottom: 1px solid var(--border); }
+  .rubric-row:last-of-type { border-bottom: none; }
+  .rubric-label { font-family: var(--sans); font-size: 12px; color: var(--text); }
+  .rubric-desc { font-family: var(--sans); font-size: 10px; color: var(--text3); margin-top: 2px; }
+  .rubric-weight { font-family: var(--serif); font-size: 15px; font-weight: 600; color: var(--navy); }
+  .rubric-footer { margin-top: 12px; font-family: var(--sans); font-size: 10px; color: var(--text3); line-height: 1.6; border-top: 1px solid var(--border); padding-top: 10px; }
+  .scraper-group { margin-bottom: 12px; }
+  .scraper-group:last-of-type { margin-bottom: 0; }
+  .scraper-sector { font-family: var(--sans); font-size: 9px; font-weight: 500; color: var(--text3); text-transform: uppercase; letter-spacing: 0.7px; margin-bottom: 5px; }
+  .scraper-companies { display: flex; flex-wrap: wrap; gap: 5px; }
+  .scraper-chip { font-family: var(--sans); font-size: 10px; padding: 3px 8px; border-radius: 3px; background: var(--bg3); border: 1px solid var(--border); color: var(--text2); }
+
+  /* ADD MODAL */
+  .modal-box { background: var(--bg2); border: 1px solid var(--border2); border-radius: 4px; padding: 22px; width: 100%; max-width: 360px; box-shadow: var(--shadow-md); border-top: 2px solid var(--navy); }
+  .modal-title { font-family: var(--serif); font-size: 16px; font-weight: 500; color: var(--navy); margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; letter-spacing: 0.2px; }
+  .form-group { margin-bottom: 12px; }
+  .form-label { font-family: var(--sans); font-size: 9px; font-weight: 500; color: var(--text3); margin-bottom: 5px; display: block; letter-spacing: 0.6px; text-transform: uppercase; }
+  .form-input { width: 100%; background: var(--bg3); border: 1px solid var(--border); border-radius: 3px; padding: 8px 10px; color: var(--text); font-family: var(--sans); font-size: 13px; outline: none; transition: border-color 0.15s; }
+  .form-input:focus { border-color: var(--navy); background: var(--bg2); }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .form-select { width: 100%; background: var(--bg3); border: 1px solid var(--border); border-radius: 3px; padding: 8px 10px; color: var(--text); font-family: var(--sans); font-size: 12px; outline: none; transition: border-color 0.15s; }
+  .form-select:focus { border-color: var(--navy); }
+  .submit-btn { width: 100%; padding: 10px; background: var(--navy); border: none; border-radius: 4px; color: #fff; font-family: var(--sans); font-size: 12px; font-weight: 500; letter-spacing: 0.4px; cursor: pointer; margin-top: 4px; transition: opacity 0.15s; }
+  .submit-btn:hover { opacity: 0.85; }
+
+  /* FUNNEL VIEW */
+  .funnel-view { padding: 0 16px; padding-bottom: 32px; }
+  .funnel-stage { margin-bottom: 16px; }
+  .funnel-stage-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .funnel-stage-name { font-family: var(--sans); font-size: 9px; font-weight: 500; color: var(--text3); text-transform: uppercase; letter-spacing: 0.7px; }
+  .funnel-bar-bg { flex: 1; height: 2px; background: var(--border); border-radius: 2px; }
+  .funnel-bar { height: 2px; background: var(--champagne); border-radius: 2px; transition: width 0.4s; }
+  .funnel-count { font-family: var(--sans); font-size: 10px; color: var(--text3); min-width: 16px; text-align: right; }
+  .funnel-cards { display: flex; flex-direction: column; gap: 6px; }
+  .funnel-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 4px; border-top: 2px solid transparent; padding: 10px 12px; display: flex; align-items: center; justify-content: space-between; box-shadow: none; transition: border-top-color 0.15s; }
+  .funnel-card:hover { border-top-color: var(--champagne); }
+  .funnel-card-left .company { font-family: var(--serif); font-size: 14px; font-weight: 500; color: var(--text); }
+  .funnel-card-left .role { font-family: var(--sans); font-size: 11px; color: var(--text2); margin-top: 1px; }
+  .funnel-card-right { display: flex; align-items: center; gap: 8px; }
+
+  /* TABLE VIEW */
+  .table-view { padding: 0 16px; overflow-x: auto; padding-bottom: 32px; }
+  .data-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+  .data-table th { font-family: var(--sans); font-size: 9px; font-weight: 500; color: var(--text3); text-transform: uppercase; letter-spacing: 0.6px; padding: 7px 8px; text-align: left; border-bottom: 1px solid var(--border); }
+  .data-table td { padding: 10px 8px; border-bottom: 1px solid var(--border); color: var(--text); vertical-align: top; }
+  .data-table tr:hover td { background: var(--bg3); }
+  .stage-badge { font-family: var(--sans); font-size: 9px; padding: 2px 7px; border-radius: 3px; background: var(--bg3); border: 1px solid var(--border); color: var(--text2); white-space: nowrap; letter-spacing: 0.2px; }
+
+  /* SCRAPER OVERLAY */
+  .scraper-group { margin-bottom: 14px; }
+  .scraper-sector { font-family: var(--sans); font-size: 9px; font-weight: 500; color: var(--text3); letter-spacing: 0.7px; text-transform: uppercase; margin-bottom: 6px; }
+  .scraper-chips { display: flex; flex-wrap: wrap; gap: 5px; }
+  .scraper-chip { font-family: var(--sans); font-size: 10px; padding: 2px 9px; border-radius: 3px; background: var(--bg3); border: 1px solid var(--border); color: var(--text2); }
+  .scraper-meta { margin-top: 14px; font-family: var(--sans); font-size: 10px; color: var(--text3); border-top: 1px solid var(--border); padding-top: 10px; display: flex; justify-content: space-between; }
+
+  /* PENDING EMPTY STATE */
+  .pending-empty { font-family: var(--sans); font-size: 11px; color: var(--text3); padding: 12px 0 4px; line-height: 1.6; }
+  .pending-empty strong { color: var(--text2); font-weight: 500; }
+
+  /* ── DESKTOP LAYOUT ─────────────────────────────────────────────────── */
+  @media (min-width: 768px) {
+    #root { max-width: 1100px; border-left: 1px solid var(--border); border-right: 1px solid var(--border); }
+    .kanban { grid-template-columns: repeat(6, 1fr); gap: 12px; }
+    .stage-tiles { grid-template-columns: repeat(6, 1fr); }
+    .overlay-box { max-width: 480px; }
+    .modal-box { max-width: 480px; }
+  }
+  @media (min-width: 481px) and (max-width: 767px) {
+    #root { border-left: 1px solid var(--border); border-right: 1px solid var(--border); }
+  }
+
+  /* ── DESKTOP (MacBook Air 13" and up) ───────────────────────────────── */
+  @media (min-width: 768px) {
+    #root { max-width: 1120px; }
+    .topbar { padding: 22px 28px 18px; }
+    .nav { padding: 14px 24px 10px; }
+    .filters { padding: 0 24px; }
+    .stage-tiles { grid-template-columns: repeat(6, 1fr); padding: 0 24px; }
+    /* Kanban: fixed-width columns, don't stretch — 4 visible, 5th scrolls in */
+    .kanban { display: flex; flex-wrap: nowrap; overflow-x: auto; gap: 12px; padding: 0 24px 40px; -webkit-overflow-scrolling: touch; }
+    .kanban > div { flex: 0 0 230px; width: 230px; }
+    .funnel-view { padding: 0 24px 40px; }
+    .table-view { padding: 0 24px 40px; }
+    .pending-wrap { padding: 0 24px; }
+    .briefing-card { margin: 0 24px 14px; }
+    .gmail-connect { margin: 0 24px 14px; }
+    /* Pending cards: 3-column grid */
+    .pending-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .pending-card { margin-bottom: 0; }
+  }
+
+  /* ── NEXT BEST ACTION ───────────────────────────────────────────────── */
+  .nba { font-family: var(--sans); font-size: 9px; margin-top: 6px; padding: 4px 8px; border-radius: 3px; display: flex; align-items: center; gap: 5px; }
+  .nba.urgent { background: rgba(220,38,38,0.07); color: #b91c1c; border: 1px solid rgba(220,38,38,0.18); }
+  .nba.suggest { background: var(--champ-dim2); color: var(--navy2); border: 1px solid rgba(179,78,42,0.18); }
+  .nba-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
+  .nba.urgent .nba-dot { background: #b91c1c; }
+  .nba.suggest .nba-dot { background: var(--navy); }
+  .brief-btn { font-family: var(--sans); font-size: 9px; padding: 3px 9px; border-radius: 3px; border: 1px solid var(--border2); background: transparent; color: var(--text2); cursor: pointer; transition: all 0.15s; letter-spacing: 0.2px; white-space: nowrap; flex-shrink: 0; }
+  .brief-btn:hover { border-color: var(--navy); color: var(--navy); background: var(--champ-dim2); }
+
+  /* ── BRIEF MODAL ────────────────────────────────────────────────────── */
+  .brief-modal-overlay { position: fixed; inset: 0; background: rgba(28,25,20,0.55); z-index: 200; display: flex; align-items: flex-end; justify-content: center; }
+  .brief-modal-box { background: var(--bg); border-radius: 8px 8px 0 0; width: 100%; max-width: 480px; max-height: 88vh; overflow-y: auto; padding: 20px 20px 32px; }
+  .brief-modal-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; }
+  .brief-modal-title { font-family: var(--serif); font-size: 17px; font-weight: 500; color: var(--text); line-height: 1.2; }
+  .brief-modal-sub { font-family: var(--sans); font-size: 11px; color: var(--text3); margin-top: 2px; }
+  .brief-close { background: none; border: none; font-size: 20px; color: var(--text3); cursor: pointer; padding: 0; line-height: 1; }
+  .brief-section { margin-bottom: 14px; }
+  .brief-section-label { font-family: var(--sans); font-size: 9px; font-weight: 500; color: var(--navy); letter-spacing: 0.7px; text-transform: uppercase; margin-bottom: 5px; display: flex; align-items: center; gap: 6px; }
+  .brief-section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+  .brief-item { font-family: var(--sans); font-size: 11px; color: var(--text2); line-height: 1.55; padding: 3px 0 3px 12px; position: relative; }
+  .brief-item::before { content: '›'; position: absolute; left: 0; color: var(--navy); font-weight: 600; }
+  .brief-copy-btn { width: 100%; padding: 10px; background: var(--navy); border: none; border-radius: 4px; color: #fff; font-family: var(--sans); font-size: 12px; cursor: pointer; margin-top: 6px; transition: opacity 0.15s; letter-spacing: 0.2px; }
+  .brief-copy-btn:hover { opacity: 0.85; }
+
+  /* ── ACTIVITY LOG TAB ───────────────────────────────────────────────── */
+  .log-view { padding: 0 16px 40px; }
+  .log-section-label { font-family: var(--sans); font-size: 9px; font-weight: 500; color: var(--text3); letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+  .log-section-label::before { content: ''; display: inline-block; width: 1.2rem; height: 1px; background: var(--text3); }
+
+  /* Reference table */
+  .savings-table { width: 100%; border-collapse: collapse; margin-bottom: 18px; }
+  .savings-table th { font-family: var(--sans); font-size: 8px; font-weight: 500; color: var(--text3); letter-spacing: 0.6px; text-transform: uppercase; padding: 0 6px 6px; text-align: left; border-bottom: 1px solid var(--border2); }
+  .savings-table th:not(:first-child) { text-align: right; }
+  .savings-table td { font-family: var(--sans); font-size: 10px; color: var(--text2); padding: 7px 6px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+  .savings-table td:not(:first-child) { text-align: right; font-variant-numeric: tabular-nums; }
+  .savings-table tr:last-child td { border-bottom: none; }
+  .savings-table .task-name { color: var(--text); font-weight: 400; }
+  .savings-table .saved-val { color: var(--navy); font-weight: 500; }
+  .savings-table .auto-tag { font-size: 8px; background: var(--green-dim); color: var(--green); border: 1px solid var(--green-border); border-radius: 2px; padding: 1px 4px; margin-left: 4px; vertical-align: middle; white-space: nowrap; }
+
+  /* Totals strip */
+  .totals-strip { background: var(--navy); border-radius: 4px; padding: 12px 14px; margin-bottom: 18px; display: flex; justify-content: space-between; align-items: center; }
+  .totals-strip-label { font-family: var(--sans); font-size: 9px; color: rgba(255,255,255,0.55); letter-spacing: 0.5px; text-transform: uppercase; }
+  .totals-strip-value { font-family: var(--serif); font-size: 22px; font-weight: 500; color: rgba(255,255,255,0.95); line-height: 1; }
+  .totals-breakdown { display: flex; gap: 12px; }
+  .totals-item { text-align: right; }
+  .totals-item-val { font-family: var(--serif); font-size: 14px; font-weight: 500; color: rgba(255,255,255,0.85); line-height: 1; }
+  .totals-item-lbl { font-family: var(--sans); font-size: 8px; color: rgba(255,255,255,0.45); margin-top: 2px; }
+
+  /* Cost strip */
+  .cost-strip { background: #2A2420; border-radius: 4px; padding: 12px 14px; margin-bottom: 18px; display: flex; justify-content: space-between; align-items: center; }
+  .cost-strip-left .label { font-family: var(--sans); font-size: 9px; color: rgba(255,255,255,0.45); letter-spacing: 0.5px; text-transform: uppercase; }
+  .cost-strip-left .value { font-family: var(--serif); font-size: 22px; font-weight: 500; color: rgba(255,255,255,0.9); line-height: 1; margin: 2px 0; }
+  .cost-strip-left .sub { font-family: var(--sans); font-size: 9px; color: rgba(255,255,255,0.35); }
+  .cost-strip-right { display: flex; gap: 12px; }
+  .cost-item { text-align: right; }
+  .cost-item-val { font-family: var(--serif); font-size: 13px; font-weight: 500; color: rgba(255,255,255,0.75); line-height: 1; }
+  .cost-item-lbl { font-family: var(--sans); font-size: 8px; color: rgba(255,255,255,0.35); margin-top: 2px; }
+  .cost-loading { font-family: var(--sans); font-size: 10px; color: rgba(255,255,255,0.35); padding: 14px; text-align: center; }
+
+  /* Optimization tips */
+  .opt-panel { background: var(--bg3); border: 1px solid var(--border2); border-radius: 4px; padding: 12px 14px; margin-bottom: 20px; }
+  .opt-header { font-family: var(--sans); font-size: 9px; font-weight: 500; color: var(--text3); letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+  .opt-header::before { content: ''; display: inline-block; width: 1.2rem; height: 1px; background: var(--text3); }
+  .opt-tip { display: flex; gap: 10px; padding: 7px 0; border-bottom: 1px solid var(--border); align-items: flex-start; }
+  .opt-tip:last-child { border-bottom: none; padding-bottom: 0; }
+  .opt-badge { font-family: var(--sans); font-size: 8px; background: var(--green-dim); color: var(--green); border: 1px solid var(--green-border); border-radius: 2px; padding: 2px 5px; white-space: nowrap; flex-shrink: 0; margin-top: 1px; }
+  .opt-tip-text .title { font-family: var(--sans); font-size: 11px; font-weight: 500; color: var(--text); line-height: 1.3; margin-bottom: 2px; }
+  .opt-tip-text .body { font-family: var(--sans); font-size: 10px; color: var(--text2); line-height: 1.45; }
+
+  /* Activity feed */
+  .log-group { margin-bottom: 14px; }
+  .log-group-header { font-family: var(--sans); font-size: 9px; font-weight: 500; color: var(--text3); letter-spacing: 0.6px; text-transform: uppercase; padding: 6px 0 4px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); margin-bottom: 2px; }
+  .log-group-count { background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 1px 6px; font-size: 9px; color: var(--text3); font-weight: 400; letter-spacing: 0; }
+  .log-entry { display: flex; align-items: flex-start; gap: 10px; padding: 7px 0; border-bottom: 1px solid var(--border); }
+  .log-entry:last-child { border-bottom: none; }
+  .log-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; }
+  .log-dot.advance { background: var(--sage); }
+  .log-dot.activated { background: var(--navy); }
+  .log-dot.dismissed { background: var(--text3); }
+  .log-dot.briefing { background: #a07850; }
+  .log-dot.added { background: var(--green); }
+  .log-dot.brief { background: var(--navy2); }
+  .log-dot.default { background: var(--text3); }
+  .log-label { font-family: var(--sans); font-size: 11px; color: var(--text); flex: 1; line-height: 1.4; }
+  .log-time { font-family: var(--sans); font-size: 9px; color: var(--text3); white-space: nowrap; flex-shrink: 0; }
+  .log-empty { font-family: var(--sans); font-size: 11px; color: var(--text3); padding: 24px 0; text-align: center; line-height: 1.6; }
+
+  /* ── SKIP REASON ─────────────────────────────────────────────────────── */
+  .skip-reasons { display: flex; flex-direction: column; gap: 3px; align-items: flex-end; }
+  .skip-reasons-label { font-size: 9px; color: var(--text3); margin-bottom: 1px; letter-spacing: 0.3px; text-transform: uppercase; }
+  .skip-reason-btn { font-family: var(--sans); font-size: 9px; padding: 3px 8px; border-radius: 3px; border: 1px solid var(--border2); background: transparent; color: var(--text2); cursor: pointer; text-align: right; white-space: nowrap; transition: all 0.12s; }
+  .skip-reason-btn:hover { border-color: var(--navy); color: var(--navy); background: var(--champ-dim2); }
+  .skip-reason-btn.cancel { color: var(--text3); border-color: transparent; font-size: 8px; }
+
+  /* ── MORNING BRIEFING ────────────────────────────────────────────────── */
+  .briefing-card { margin: 0 16px 14px; background: var(--navy); border-radius: 4px; padding: 10px 16px; box-shadow: none; }
+  .briefing-header { display: flex; justify-content: space-between; align-items: center; cursor: pointer; user-select: none; }
+  .briefing-header-left { display: flex; align-items: center; gap: 8px; }
+  .briefing-label { font-family: var(--sans); font-size: 9px; font-weight: 500; color: rgba(200,185,154,0.7); letter-spacing: 0.8px; text-transform: uppercase; }
+  .briefing-time { font-family: var(--sans); font-size: 9px; color: rgba(255,255,255,0.30); }
+  .briefing-chevron { font-size: 10px; color: rgba(255,255,255,0.30); transition: transform 0.2s; line-height: 1; }
+  .briefing-chevron.open { transform: rotate(180deg); }
+  .briefing-preview { font-family: var(--sans); font-size: 10px; color: rgba(255,255,255,0.40); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px; }
+  .briefing-actions { display: flex; align-items: center; gap: 8px; }
+  .briefing-close { background: none; border: none; color: rgba(255,255,255,0.25); cursor: pointer; font-size: 15px; padding: 0; line-height: 1; }
+  .briefing-close:hover { color: rgba(255,255,255,0.7); }
+  .briefing-body { overflow: hidden; transition: max-height 0.3s ease, opacity 0.25s ease; }
+  .briefing-body.collapsed { max-height: 0; opacity: 0; pointer-events: none; }
+  .briefing-body.expanded { max-height: 2000px; opacity: 1; }
+  .briefing-text { font-family: var(--sans); font-size: 11px; color: rgba(255,255,255,0.80); line-height: 1.75; white-space: pre-line; padding-top: 10px; }
+
+  /* ── GMAIL CONNECT BANNER ────────────────────────────────────────────── */
+  .gmail-connect { margin: 0 16px 14px; background: var(--bg2); border: 1px dashed var(--border2); border-radius: 4px; padding: 11px 14px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .gmail-connect-text { font-family: var(--sans); font-size: 11px; color: var(--text2); line-height: 1.4; }
+  .gmail-connect-text strong { color: var(--text); font-weight: 500; }
+  .gmail-connect-btn { font-family: var(--sans); font-size: 10px; padding: 5px 13px; border-radius: 3px; border: 1px solid var(--champagne); background: var(--champ-dim); color: var(--navy); cursor: pointer; transition: all 0.15s; white-space: nowrap; flex-shrink: 0; }
+  .gmail-connect-btn:hover { background: var(--champ-dim2); }
+  .gmail-link { font-family: var(--sans); font-size: 10px; color: var(--text3); background: none; border: none; cursor: pointer; padding: 0; letter-spacing: 0.2px; transition: color 0.15s; }
+  .gmail-link:hover { color: var(--navy); }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.production.min.js" integrity="sha384-DGyLxAyjq0f9SPpVevD6IgztCFlnMF6oW/XQGmfe+IsZ8TqEiDrcHkMLKI6fiB/Z" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js" integrity="sha384-gTGxhz21lVGYNMcdJOyq01Edg0jhn/c22nsx0kyqP0TxaV5WVdsSH1fSDUf5YJj1" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.2/babel.min.js" integrity="sha384-dqDn4UOhYWNxmtwnMX6yC3WtZZ6Li8rF6rLB7cu0i/R7btvb+p+kObgEHto7VsJK" crossorigin="anonymous"></script>
+<script type="text/babel">
+const { useState, useCallback, useEffect } = React;
+
+const STAGES = ['Prospecting', 'Applied', 'Phone Screen', 'Interview Prep', 'Negotiation', 'Archived'];
+
+// "Josh suggests" holds two kinds of item. A vacancy is a posting that exists
+// right now (scraped, has a url). A signal is an opportunity inferred from a
+// market event before anything is posted — it carries evidence instead of a
+// url, and can never carry a job title. See docs/SIGNALS.md.
+const SIGNAL_LABELS = {
+  leadership_change: 'leadership change',
+  org_change:        'restructure',
+  funding_growth:    'funding & growth',
+  strategy_signal:   'strategy',
+  warm_path:         'warm path',
+  repost:            'reposted role',
+  seasonal:          'seasonal pattern',
+};
+
+// What Josh prepares at each stage. Shown as chips on every Kanban card;
+// a role's `joshPrep` array (set by the agent) overrides these defaults.
+const STAGE_PREP = {
+  'Prospecting':    ['Company research'],
+  'Applied':        ['CV tailoring', 'Follow-up draft'],
+  'Phone Screen':   ['Screen prep Q&A'],
+  'Interview Prep': ['Interview brief', 'Competitive analysis'],
+  'Negotiation':    ['Comp benchmark file'],
+};
+const SECTORS = ['All', 'Luxury', 'Beauty', 'Retail', 'FMCG', 'Sports'];
+
+// Display list only — keep roughly in sync with config/targets.json.
+// (Static frontend file: editing config/targets.json does not auto-update this dropdown.)
+const SCRAPE_TARGETS = [
+  { company: 'Burberry',      sector: 'Luxury'     },
+  { company: 'Prada Group',   sector: 'Luxury'     },
+  { company: 'Tapestry',      sector: 'Luxury'     },
+  { company: 'Coty',          sector: 'Beauty'     },
+  { company: 'Estée Lauder',  sector: 'Beauty'     },
+  { company: 'Glossier',      sector: 'Beauty'     },
+  { company: 'Inditex',       sector: 'Retail'     },
+  { company: 'Decathlon',     sector: 'Retail'     },
+  { company: 'Mattel',        sector: 'Retail'     },
+  { company: 'Unilever',      sector: 'FMCG'       },
+  { company: 'Danone',        sector: 'FMCG'       },
+  { company: 'Reckitt',       sector: 'FMCG'       },
+  { company: 'On Running',    sector: 'Sports'     },
+  { company: 'Adidas',        sector: 'Sports'     },
+  { company: 'Back Market',   sector: 'E-commerce' },
+];
+
+// No data hardcoded here — all pipeline data lives in Upstash via the API.
+// The dashboard secret is stored in localStorage after the user authenticates.
+const SECRET_KEY = 'josh_dashboard_secret';
+function getSecret() { return localStorage.getItem(SECRET_KEY) || ''; }
+function clearSecret() { localStorage.removeItem(SECRET_KEY); }
+
+// ── API-backed persistence ────────────────────────────────────────────
+const API = '/api/pipeline';
+
+// ── Demo mode ─────────────────────────────────────────────────────────
+// Open app.html?demo=1 to explore the dashboard with fictional data and no
+// backend: auth is skipped, saves stay in-memory, nothing is persisted.
+// Every role, score, date, note and person below is invented. Company names
+// are real brands used only to show a realistic sector mix — none of this
+// represents a real vacancy, application or individual.
+const DEMO = new URLSearchParams(location.search).has('demo');
+const demoDay = (offset) => new Date(Date.now() + offset * 864e5)
+  .toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+const DEMO_DATA = {
+  roles: [
+    { id: 'demo-1', company: 'Back Market', role: 'VP Data & AI', sector: 'E-commerce', location: 'Paris', stage: 'Negotiation', score: 95, lastContact: demoDay(-1), nextAction: demoDay(2), actionNote: 'Comp call booked. Counter framework drafted, review before the call.', source: 'Referral', joshPrep: ['Comp benchmark file', 'Counter framework'] },
+    { id: 'demo-2', company: 'Tapestry', role: 'Chief Data Officer, EMEA', sector: 'Luxury', location: 'Paris', stage: 'Phone Screen', score: 92, lastContact: demoDay(-5), nextAction: demoDay(1), actionNote: 'Recruiter quiet 5 days. Follow-up draft waiting in Gmail.', source: 'Scraper', joshPrep: ['Screen prep Q&A', 'Follow-up draft'] },
+    { id: 'demo-3', company: 'Burberry', role: 'VP Data & Analytics', sector: 'Luxury', location: 'London', stage: 'Interview Prep', score: 88, lastContact: demoDay(-2), nextAction: demoDay(3), actionNote: 'Panel round: CDO + CTO. Prep brief ready.', source: 'Scraper', joshPrep: ['Interview brief', 'Panel dossier', 'Competitive analysis'] },
+    { id: 'demo-4', company: 'Unilever', role: 'Global Head of AI, Consumer', sector: 'FMCG', location: 'London', stage: 'Applied', score: 81, lastContact: demoDay(-8), nextAction: demoDay(4), actionNote: 'Application acknowledged. Warm path via former colleague identified.', source: 'Direct', joshPrep: ['CV tailoring', 'Warm intro draft'] },
+    { id: 'demo-5', company: 'Coty', role: 'Senior Director, Data Science', sector: 'Beauty', location: 'Paris', stage: 'Applied', score: 74, lastContact: demoDay(-12), nextAction: demoDay(-1), actionNote: 'Overdue: chase the hiring manager intro.', source: 'Scraper' },
+    { id: 'demo-6', company: 'Adidas', role: 'Senior Director, Digital Analytics', sector: 'Sports', location: 'London', stage: 'Phone Screen', score: 76, lastContact: demoDay(-3), nextAction: demoDay(5), actionNote: 'Screen with talent partner booked.', source: 'LinkedIn' },
+    { id: 'demo-7', company: 'Mattel', role: 'VP Digital & E-commerce Analytics', sector: 'Retail', location: 'Remote', stage: 'Prospecting', score: 78, lastContact: '—', nextAction: demoDay(6), actionNote: 'Flagged by Josh — review.', source: 'Scraper' },
+    { id: 'demo-8', company: 'Decathlon', role: 'Head of Data Platforms', sector: 'Retail', location: 'Paris', stage: 'Prospecting', score: 68, lastContact: '—', nextAction: demoDay(7), actionNote: 'Warm path: former teammate on the data team.', source: 'Scraper' },
+  ],
+  pending: [
+    { id: 'demo-s1', kind: 'signal', role: 'No posting yet — watching', company: 'Pernod Ricard', sector: 'FMCG', location: 'Paris', score: 88,
+      signalType: 'leadership_change', confidence: 'high',
+      headline: 'Chief Digital & Data Officer stepped down after 5 years',
+      thesis: 'The seat is likely to reopen. Successor searches at this level typically start within a quarter, and the shortlist is usually formed before anything is posted.',
+      suggestedAction: 'Research the interim holder and warm the path now, before it reaches a job board',
+      evidence: [{ source: 'Company press release', url: 'https://www.pernod-ricard.com/en/media', date: '14 Jul' }],
+      warmPaths: 1, foundAt: Date.now() - 2 * 864e5 },
+    { id: 'demo-s2', kind: 'signal', role: 'No posting yet — watching', company: 'Heineken', sector: 'FMCG', location: 'Amsterdam', score: 74,
+      signalType: 'warm_path', confidence: 'medium',
+      headline: 'A 1st-degree connection started as Director of Data Platforms three weeks ago',
+      thesis: 'New leaders build teams in their first two quarters. An introduction now is worth more than an application in six months.',
+      suggestedAction: 'Ask for twenty minutes about their roadmap, not about a job',
+      evidence: [{ source: 'LinkedIn position update', url: 'https://www.linkedin.com/feed/', date: '8 Jul' }],
+      warmPaths: 1, foundAt: Date.now() - 5 * 864e5 },
+    { id: 'demo-p1', company: 'Glossier', role: 'VP Consumer Data & Personalisation', sector: 'Beauty', location: 'New York', score: 84, source: 'Scraper — career page', scrapedAt: Date.now() - 10 * 3600e3, url: 'https://boards.greenhouse.io/glossier' },
+    { id: 'demo-p2', company: 'Inditex', role: 'Director of AI, Supply Chain', sector: 'Retail', location: 'Remote', score: 71, source: 'Scraper — career page', scrapedAt: Date.now() - 34 * 3600e3, url: 'https://www.inditexcareers.com/' },
+    { id: 'demo-p3', company: 'Danone', role: 'Head of Advanced Analytics', sector: 'FMCG', location: 'Paris', score: 66, source: 'Scraper — career page', scrapedAt: Date.now() - 3 * 864e5, url: 'https://careers.danone.com/en-global/jobs.html' },
+  ],
+  briefing: {
+    ts: Date.now() - 2 * 3600e3,
+    text: [
+      '• Agenda: Burberry panel prep, Back Market comp call ' + demoDay(2),
+      '• Pipeline: 8 active. 1 Negotiation, 1 Interview Prep, 2 Phone Screen',
+      '• Scraper: 3 new roles overnight. Glossier at 84 is the standout',
+      '• Flag: Coty follow-up is overdue, chase the hiring manager intro today',
+      '• Tapestry recruiter quiet 5 days. Follow-up draft waiting in Gmail',
+    ].join('\n'),
+  },
+  activity: [
+    { ts: Date.now() - 70 * 3600e3, type: 'scrape',    label: '3 roles added to pending' },
+    { ts: Date.now() - 50 * 3600e3, type: 'draft',     label: 'Follow-up draft created — Tapestry' },
+    { ts: Date.now() - 30 * 3600e3, type: 'activated', label: 'Activated Adidas · Senior Director, Digital Analytics' },
+    { ts: Date.now() - 26 * 3600e3, type: 'advance',   label: 'Back Market → Negotiation' },
+    { ts: Date.now() -  2 * 3600e3, type: 'briefing',  label: 'Morning briefing loaded' },
+  ],
+  tokenLog: Array.from({ length: 14 }, (_, i) => ({
+    ts: Date.now() - i * 864e5,
+    type: ['chat', 'monitor', 'chat', 'warmpath', 'code'][i % 5],
+    inputTokens: 30000 + (i * 7919) % 40000,
+    outputTokens: 2000 + (i * 977) % 4000,
+    cacheReadTokens: 15000,
+    cacheWriteTokens: 0,
+  })),
+  warmNetwork: {
+    'Burberry': [
+      { firstName: 'Maya', lastName: 'Lindqvist', position: 'Talent Acquisition Director', company: 'Burberry', seniorityRank: 45, isRecruiter: true },
+      { firstName: 'Tom', lastName: 'Weaver', position: 'Director of Engineering, Digital', company: 'Burberry', seniorityRank: 40 },
+    ],
+    'Back Market': [
+      { firstName: 'Chloé', lastName: 'Perrin', position: 'Chief People Officer', company: 'Back Market', seniorityRank: 70, isRecruiter: true },
+    ],
+    'Tapestry': [
+      { firstName: 'Daniel', lastName: 'Okafor', position: 'SVP Digital & Consumer', company: 'Tapestry', seniorityRank: 60 },
+    ],
+  },
+};
+
+// Optional external sprint board — populated from the API response
+// (SPRINT_BOARD_URL env var on the server). Null = feature disabled.
+let SPRINT_BOARD_URL = null;
+
+function authHeaders() {
+  return { 'Content-Type': 'application/json', 'x-dashboard-secret': getSecret() };
+}
+
+async function loadPipeline(setRoles, setPending, setDismissed, setBriefing, setActivity, setTokenLog) {
+  if (DEMO) {
+    setRoles(DEMO_DATA.roles);
+    setPending(DEMO_DATA.pending);
+    setDismissed([]);
+    if (setBriefing) setBriefing(DEMO_DATA.briefing);
+    if (setActivity) setActivity(DEMO_DATA.activity);
+    if (setTokenLog) setTokenLog(DEMO_DATA.tokenLog);
+    return true;
+  }
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 8000);
+    const res = await fetch(API, { headers: authHeaders(), signal: controller.signal });
+    clearTimeout(timeout);
+    if (!res.ok) throw new Error('API returned ' + res.status);
+    const data = await res.json();
+    if (Array.isArray(data.roles) && data.roles.length > 0)     setRoles(data.roles);
+    if (Array.isArray(data.pending) && data.pending.length >= 0) setPending(data.pending);
+    if (Array.isArray(data.dismissed))                           setDismissed(data.dismissed);
+    if (data.briefing && setBriefing)                            setBriefing(data.briefing);
+    if (Array.isArray(data.activity) && setActivity)             setActivity(data.activity);
+    if (Array.isArray(data.tokenLog) && setTokenLog)             setTokenLog(data.tokenLog);
+    SPRINT_BOARD_URL = data.sprintBoardUrl || null;
+    return true;
+  } catch(e) {
+    console.warn('Pipeline load failed:', e.message);
+    return false;
+  }
+}
+
+function notifyToast(message, kind = 'error') {
+  window.dispatchEvent(new CustomEvent('josh:toast', { detail: { message, kind } }));
+}
+
+async function savePipeline(payload) {
+  if (DEMO) return; // demo mode: mutations live in React state only
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 8000);
+    const res = await fetch(API, {
+      method: 'POST',
+      headers: authHeaders(),
+      body: JSON.stringify(payload),
+      signal: controller.signal
+    });
+    clearTimeout(timeout);
+    if (!res.ok) {
+      const text = await res.text().catch(() => '');
+      throw new Error(`HTTP ${res.status} ${text || res.statusText}`);
+    }
+  } catch(e) {
+    console.warn('Pipeline save failed:', e.message);
+    notifyToast(`Save failed — ${e.message}. Changes may not be persisted.`, 'error');
+  }
+}
+
+function WarmthOverlay({ network, onClose }) {
+  // Flatten all contacts across target companies, rank by seniorityRank
+  // (with a recruiter boost — HR/recruiter connections are higher leverage
+  // for a job search than a mid-level peer of the same rank).
+  const all = [];
+  Object.entries(network || {}).forEach(([company, contacts]) => {
+    (contacts || []).forEach(c => all.push({ ...c, targetCompany: company }));
+  });
+  const ranked = all
+    .map(c => ({ ...c, warmthScore: (c.seniorityRank || 20) + (c.isRecruiter ? 15 : 0) }))
+    .sort((a, b) => b.warmthScore - a.warmthScore)
+    .slice(0, 25);
+  const totalAcross = all.length;
+  const totalCompanies = Object.keys(network || {}).length;
+  return (
+    <div className="overlay open" onClick={e => e.target === e.currentTarget && onClose()}>
+      <div className="overlay-box" style={{maxWidth: 520, maxHeight: '85vh', display: 'flex', flexDirection: 'column'}}>
+        <div className="overlay-title">
+          Warmth — Top 25 paths
+          <button className="overlay-close" onClick={onClose}>×</button>
+        </div>
+        {ranked.length === 0 ? (
+          <div style={{fontSize: 12, color: 'var(--text2)', padding: '12px 0'}}>
+            No warm paths loaded yet. Run the LinkedIn import.
+          </div>
+        ) : (
+          <div style={{display: 'flex', flexDirection: 'column', gap: 8, overflowY: 'auto', flex: 1, paddingRight: 4}}>
+            {ranked.map((c, i) => (
+              <div key={i} style={{
+                display: 'flex', alignItems: 'flex-start', gap: 10,
+                padding: '8px 10px', borderRadius: 8,
+                background: 'var(--bg)', border: '1px solid var(--border)',
+              }}>
+                <div style={{
+                  fontFamily: 'var(--serif)', fontSize: 14, fontWeight: 500,
+                  color: 'var(--navy)', minWidth: 20, textAlign: 'right',
+                }}>{i + 1}</div>
+                <div style={{flex: 1, minWidth: 0}}>
+                  <div style={{fontSize: 13, fontWeight: 500, color: 'var(--text)'}}>
+                    {c.firstName} {c.lastName}
+                    {c.isRecruiter && <span style={{
+                      marginLeft: 6, fontSize: 9, padding: '1px 5px',
+                      background: 'rgba(210, 120, 40, 0.15)', color: '#b8601a',
+                      borderRadius: 8, fontWeight: 500,
+                    }}>HR</span>}
+                  </div>
+                  <div style={{fontSize: 11, color: 'var(--text2)', marginTop: 2}}>
+                    {c.position}
+                  </div>
+                  <div style={{fontSize: 10, color: 'var(--text3)', marginTop: 2}}>
+                    {c.targetCompany} · {c.company}
+                  </div>
+                </div>
+                <div style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 4}}>
+                  <div style={{
+                    fontSize: 11, fontWeight: 600, color: 'var(--navy)',
+                    padding: '2px 7px', background: 'rgba(40, 90, 180, 0.12)',
+                    borderRadius: 10, border: '1px solid rgba(40, 90, 180, 0.25)',
+                  }}>{c.warmthScore}</div>
+                  {c.url && (
+                    <a href={c.url} target="_blank" rel="noopener noreferrer"
+                       style={{fontSize: 10, color: 'var(--text3)', textDecoration: 'none'}}>
+                      in →
+                    </a>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+        <div className="rubric-footer" style={{marginTop: 14}}>
+          {totalAcross} warm paths across {totalCompanies} target companies
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ScoreOverlay({ onClose }) {
+  return (
+    <div className="overlay open" onClick={e => e.target === e.currentTarget && onClose()}>
+      <div className="overlay-box">
+        <div className="overlay-title">
+          How we score
+          <button className="overlay-close" onClick={onClose}>×</button>
+        </div>
+        {[
+          ['Seniority match', 'C-level or strong C-1', 25],
+          ['Sector fit', 'luxury · consumer · tech · AI', 20],
+          ['AI/Data centrality', 'core to role, not side function', 20],
+          ['Geography', 'Paris · London · Europe · US East', 15],
+          ['P&L / commercial scope', 'owns revenue or budget', 10],
+          ['Company ambition', 'growth trajectory · brand strength', 10],
+        ].map(([label, desc, weight]) => (
+          <div className="rubric-row" key={label}>
+            <div><div className="rubric-label">{label}</div><div className="rubric-desc">{desc}</div></div>
+            <div className="rubric-weight">{weight}</div>
+          </div>
+        ))}
+        <div className="rubric-footer">
+          80+ priority &nbsp;·&nbsp; 60–79 monitor &nbsp;·&nbsp; below 60 skip
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ScraperOverlay({ onClose }) {
+  const [showHowTo, setShowHowTo] = useState(false);
+  const grouped = SCRAPE_TARGETS.reduce((acc, t) => {
+    (acc[t.sector] = acc[t.sector] || []).push(t.company);
+    return acc;
+  }, {});
+  return (
+    <div className="overlay open" onClick={e => e.target === e.currentTarget && onClose()}>
+      <div className="overlay-box">
+        <div className="overlay-title">
+          Daily scraper targets
+          <button className="overlay-close" onClick={onClose}>×</button>
+        </div>
+        {Object.entries(grouped).map(([sector, companies]) => (
+          <div className="scraper-group" key={sector}>
+            <div className="scraper-sector">{sector}</div>
+            <div className="scraper-companies">
+              {companies.map(c => <span className="scraper-chip" key={c}>{c}</span>)}
+            </div>
+          </div>
+        ))}
+        <div className="rubric-footer">
+          {SCRAPE_TARGETS.length} companies &nbsp;·&nbsp; runs daily at 05:00 UTC
+          <button
+            onClick={() => setShowHowTo(s => !s)}
+            style={{marginLeft: 10, padding: '2px 9px', fontFamily: 'var(--sans)', fontSize: 10,
+                    background: 'transparent', color: 'var(--navy)', border: '1px dashed var(--navy)',
+                    borderRadius: 10, cursor: 'pointer'}}>
+            + Add company
+          </button>
+        </div>
+        {showHowTo && (
+          <div style={{marginTop: 10, padding: '10px 12px', background: 'var(--bg)',
+                       border: '1px solid var(--border)', borderRadius: 8, fontSize: 11,
+                       color: 'var(--text2)', lineHeight: 1.6}}>
+            The scrape list lives in <b>config/targets.json</b>, not in the dashboard.
+            In your clone, run
+            <code style={{display: 'block', margin: '6px 0', padding: '5px 8px',
+                          background: 'var(--bg2)', border: '1px solid var(--border)',
+                          borderRadius: 6, fontSize: 11}}>npm run add-company</code>
+            answer its 5 questions, then push. The cron picks the company up on the next
+            run. Need ideas? See <b>config/companies-universe.json</b> for ~50 companies
+            to choose from, and <b>docs/ADAPTERS.md</b> for picking the right parser.
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function AddModal({ onClose, onAdd }) {
+  const [form, setForm] = useState({ company: '', role: '', sector: 'Luxury', location: '', stage: 'Prospecting', score: '', lastContact: '', nextAction: '', actionNote: '', source: 'Word of mouth' });
+  const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
+  const submit = () => {
+    if (!form.company || !form.role) return;
+    onAdd({ ...form, id: crypto.randomUUID(), score: parseInt(form.score) || 70 });
+    onClose();
+  };
+  return (
+    <div className="overlay open" onClick={e => e.target === e.currentTarget && onClose()}>
+      <div className="modal-box">
+        <div className="modal-title">
+          Add opportunity
+          <button className="overlay-close" onClick={onClose}>×</button>
+        </div>
+        <div className="form-group">
+          <label className="form-label">Company</label>
+          <input className="form-input" value={form.company} onChange={e => set('company', e.target.value)} placeholder="e.g. Burberry" />
+        </div>
+        <div className="form-group">
+          <label className="form-label">Role</label>
+          <input className="form-input" value={form.role} onChange={e => set('role', e.target.value)} placeholder="e.g. Chief Data Officer" />
+        </div>
+        <div className="form-row">
+          <div className="form-group">
+            <label className="form-label">Sector</label>
+            <select className="form-select" value={form.sector} onChange={e => set('sector', e.target.value)}>
+              {['Luxury','Beauty','Retail','FMCG','Sports','E-commerce'].map(s => <option key={s}>{s}</option>)}
+            </select>
+          </div>
+          <div className="form-group">
+            <label className="form-label">Stage</label>
+            <select className="form-select" value={form.stage} onChange={e => set('stage', e.target.value)}>
+              {STAGES.map(s => <option key={s}>{s}</option>)}
+            </select>
+          </div>
+        </div>
+        <div className="form-row">
+          <div className="form-group">
+            <label className="form-label">Location</label>
+            <input className="form-input" value={form.location} onChange={e => set('location', e.target.value)} placeholder="Paris" />
+          </div>
+          <div className="form-group">
+            <label className="form-label">Score (0–100)</label>
+            <input className="form-input" type="number" value={form.score} onChange={e => set('score', e.target.value)} placeholder="75" />
+          </div>
+        </div>
+        <div className="form-row">
+          <div className="form-group">
+            <label className="form-label">Last contact</label>
+            <input className="form-input" value={form.lastContact} onChange={e => set('lastContact', e.target.value)} placeholder="26 Mar" />
+          </div>
+          <div className="form-group">
+            <label className="form-label">Next action</label>
+            <input className="form-input" value={form.nextAction} onChange={e => set('nextAction', e.target.value)} placeholder="1 Apr" />
+          </div>
+        </div>
+        <div className="form-group">
+          <label className="form-label">Action note</label>
+          <input className="form-input" value={form.actionNote} onChange={e => set('actionNote', e.target.value)} placeholder="e.g. Follow up with recruiter" />
+        </div>
+        <div className="form-group">
+          <label className="form-label">Source</label>
+          <select className="form-select" value={form.source} onChange={e => set('source', e.target.value)}>
+            {['Word of mouth','Recruiter','Josh scraper','Job board','Direct application','Other'].map(s => <option key={s}>{s}</option>)}
+          </select>
+        </div>
+        <button className="submit-btn" onClick={submit}>Add to pipeline →</button>
+      </div>
+    </div>
+  );
+}
+
+function EditModal({ role, onClose, onSave, onDelete }) {
+  const [form, setForm] = React.useState({ ...role, score: String(role.score || '') });
+  const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
+  const submit = () => {
+    if (!form.company || !form.role) return;
+    onSave({ ...form, score: parseInt(form.score) || 70 });
+    onClose();
+  };
+  const handleDelete = () => {
+    if (window.confirm('Remove ' + role.company + ' from pipeline?')) {
+      onDelete(role.id);
+      onClose();
+    }
+  };
+  return (
+    <div className="overlay open" onClick={e => e.target === e.currentTarget && onClose()}>
+      <div className="modal-box">
+        <div className="modal-title">
+          Edit opportunity
+          <button className="overlay-close" onClick={onClose}>×</button>
+        </div>
+        <div className="form-group">
+          <label className="form-label">Company</label>
+          <input className="form-input" value={form.company} onChange={e => set('company', e.target.value)} />
+        </div>
+        <div className="form-group">
+          <label className="form-label">Role</label>
+          <input className="form-input" value={form.role} onChange={e => set('role', e.target.value)} />
+        </div>
+        <div className="form-row">
+          <div className="form-group">
+            <label className="form-label">Sector</label>
+            <select className="form-select" value={form.sector} onChange={e => set('sector', e.target.value)}>
+              {['Luxury','Beauty','Retail','FMCG','Sports','E-commerce'].map(s => <option key={s}>{s}</option>)}
+            </select>
+          </div>
+          <div className="form-group">
+            <label className="form-label">Stage</label>
+            <select className="form-select" value={form.stage} onChange={e => set('stage', e.target.value)}>
+              {STAGES.map(s => <option key={s}>{s}</option>)}
+            </select>
+          </div>
+        </div>
+        <div className="form-row">
+          <div className="form-group">
+            <label className="form-label">Location</label>
+            <input className="form-input" value={form.location} onChange={e => set('location', e.target.value)} />
+          </div>
+          <div className="form-group">
+            <label className="form-label">Score (0–100)</label>
+            <input className="form-input" type="number" value={form.score} onChange={e => set('score', e.target.value)} />
+          </div>
+        </div>
+        <div className="form-row">
+          <div className="form-group">
+            <label className="form-label">Last contact</label>
+            <input className="form-input" value={form.lastContact} onChange={e => set('lastContact', e.target.value)} />
+          </div>
+          <div className="form-group">
+            <label className="form-label">Next action</label>
+            <input className="form-input" value={form.nextAction} onChange={e => set('nextAction', e.target.value)} />
+          </div>
+        </div>
+        <div className="form-group">
+          <label className="form-label">Action note</label>
+          <input className="form-input" value={form.actionNote} onChange={e => set('actionNote', e.target.value)} />
+        </div>
+        <div className="form-row">
+          <div className="form-group">
+            <label className="form-label">📅 Calendar link</label>
+            <input className="form-input" value={form.calendarUrl || ''} onChange={e => set('calendarUrl', e.target.value)} placeholder="Paste Google Calendar event URL" />
+          </div>
+          <div className="form-group">
+            <label className="form-label">✉ Gmail thread</label>
+            <input className="form-input" value={form.gmailUrl || ''} onChange={e => set('gmailUrl', e.target.value)} placeholder="Paste Gmail thread URL" />
+          </div>
+        </div>
+        <div style={{display:'flex', gap:8, marginTop:4}}>
+          <button className="submit-btn" style={{flex:1}} onClick={submit}>Save changes →</button>
+          <button onClick={handleDelete} style={{padding:'10px 14px', background:'transparent', border:'1px solid #dc2626', borderRadius:7, color:'#dc2626', cursor:'pointer', fontSize:12, fontFamily:'var(--sans)', transition:'opacity 0.15s'}} onMouseOver={e=>e.target.style.opacity=0.7} onMouseOut={e=>e.target.style.opacity=1}>Delete</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ── NEXT BEST ACTION HELPER ─────────────────────────────────────────── */
+function computeNBA(role) {
+  const { stage, lastContact } = role;
+  if (stage === 'Archived') return null;
+  let daysSince = null;
+  if (lastContact && lastContact !== '—') {
+    const raw = lastContact.includes('202') ? lastContact : lastContact + ' 2026';
+    const d = new Date(raw);
+    if (!isNaN(d.getTime())) daysSince = Math.max(0, Math.floor((Date.now() - d.getTime()) / 86400000));
+  }
+  if (stage === 'Prospecting') {
+    if (daysSince === null || daysSince > 21) return { text: 'First contact overdue', urgent: true };
+    if (daysSince > 10) return { text: `Warm path — ${daysSince}d since last touch`, urgent: false };
+    return null;
+  }
+  if (stage === 'Applied') {
+    if (daysSince !== null && daysSince > 14) return { text: `Chase — ${daysSince}d no reply`, urgent: true };
+    if (daysSince !== null && daysSince > 7) return { text: 'Follow up soon', urgent: false };
+    return null;
+  }
+  if (stage === 'Phone Screen') return { text: 'Prep 3 key stories for screen', urgent: false };
+  if (stage === 'Interview Prep') return { text: 'Build interview brief below', urgent: false };
+  if (stage === 'Negotiation') return { text: 'Review comp anchors before next call', urgent: true };
+  return null;
+}
+
+/* ── BRIEF MODAL ────────────────────────────────────────────────────── */
+function BriefModal({ role, onClose }) {
+  const briefText = `INTERVIEW BRIEF — ${role.company}
+Role: ${role.role}
+Sector: ${role.sector} | Location: ${role.location || '—'}
+Stage: ${role.stage} | Score: ${role.score}
+
+COMPANY INTEL
+› Research recent news, earnings, and leadership changes before the call
+› Know their AI / digital transformation narrative — how does this role fit?
+› Check LinkedIn for your interviewers: tenure, background, posting style
+
+ROLE ALIGNMENT
+› Lead with the ${role.sector} angle — that's your strongest fit signal
+› Prepare a 90-second opening that connects your background to their challenge
+› Have a ready answer for "why now / why us?" that's specific to this company
+
+KEY NARRATIVES (3 stories to have ready)
+› Transformation at scale — a time you drove measurable change across a large org
+› Stakeholder influence — a time you moved a sceptical senior audience
+› AI / data in practice — a concrete example, not just awareness
+
+LIKELY QUESTIONS
+› What's your approach to [sector] digital strategy at Director level?
+› How have you built high-performing cross-functional teams?
+› Tell me about a time a bet didn't pay off — what did you do?
+
+WATCH-OUTS
+› Don't over-index on past brand names — show transferable impact
+› If comp comes up early, defer: "I'm focused on fit for now"
+› Prepare 2–3 sharp questions that show you've done homework`;
+
+  const copy = () => {
+    navigator.clipboard.writeText(briefText).then(() => {
+      const btn = document.getElementById('brief-copy-btn');
+      if (btn) { btn.textContent = 'Copied!'; setTimeout(() => { btn.textContent = 'Copy brief to clipboard'; }, 1800); }
+    });
+  };
+
+  return (
+    <div className="brief-modal-overlay" onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
+      <div className="brief-modal-box">
+        <div className="brief-modal-header">
+          <div>
+            <div className="brief-modal-title">{role.company}</div>
+            <div className="brief-modal-sub">{role.role} · {role.stage}</div>
+          </div>
+          <button className="brief-close" onClick={onClose}>×</button>
+        </div>
+
+        {[
+          { label: 'Company intel', items: [
+            'Research recent news, earnings, and leadership changes',
+            `Know their AI/digital narrative — how does this ${role.sector} role fit?`,
+            'Check LinkedIn for your interviewers: tenure, background, posting style',
+          ]},
+          { label: 'Role alignment', items: [
+            `Lead with the ${role.sector} angle — that's your strongest fit signal`,
+            'Prepare a 90-second opening connecting your background to their challenge',
+            '"Why now / why us?" answer — make it specific to this company',
+          ]},
+          { label: 'Three stories to have ready', items: [
+            'Transformation at scale — measurable change across a large org',
+            'Stakeholder influence — moved a sceptical senior audience',
+            'AI / data in practice — concrete example, not just awareness',
+          ]},
+          { label: 'Likely questions', items: [
+            `What's your approach to ${role.sector} digital strategy at Director level?`,
+            'How have you built high-performing cross-functional teams?',
+            'Tell me about a time a bet didn\'t pay off — what did you do?',
+          ]},
+          { label: 'Watch-outs', items: [
+            'Don\'t over-index on past brand names — show transferable impact',
+            'If comp comes up early, defer: "I\'m focused on fit for now"',
+            'Prepare 2–3 sharp questions that show you\'ve done homework',
+          ]},
+        ].map(({ label, items }) => (
+          <div className="brief-section" key={label}>
+            <div className="brief-section-label">{label}</div>
+            {items.map((item, i) => <div className="brief-item" key={i}>{item}</div>)}
+          </div>
+        ))}
+
+        <button id="brief-copy-btn" className="brief-copy-btn" onClick={copy}>Copy brief to clipboard</button>
+      </div>
+    </div>
+  );
+}
+
+/* ── LOG VIEW ────────────────────────────────────────────────────────── */
+function LogView({ activity, tokenLog }) {
+  // Sprint board fallback — used when KV token log is empty
+  const [sprintStats, setSprintStats] = React.useState(null);
+  const [sprintLoading, setSprintLoading] = React.useState(true);
+
+  const log = Array.isArray(tokenLog) ? tokenLog : [];
+  const hasTokenData = log.length > 0;
+
+  React.useEffect(() => {
+    if (hasTokenData || !SPRINT_BOARD_URL) { setSprintLoading(false); return; }
+    async function fetchSprint() {
+      try {
+        const sprintsRes = await fetch(`${SPRINT_BOARD_URL}/api/sprints`);
+        if (!sprintsRes.ok) throw new Error('failed');
+        const sprints = await sprintsRes.json();
+        let totalInput = 0, totalOutput = 0, sprintCount = 0;
+        await Promise.all(sprints.map(async sprint => {
+          const res = await fetch(`${SPRINT_BOARD_URL}/api/tasks?sprintId=${sprint.id}`);
+          const tasks = await res.json();
+          const joshTasks = (Array.isArray(tasks) ? tasks : []).filter(t => t.agentId === 'josh');
+          const hasT = joshTasks.some(t => (t.inputTokens || 0) + (t.outputTokens || 0) > 0);
+          if (hasT) sprintCount++;
+          joshTasks.forEach(t => { totalInput += t.inputTokens || 0; totalOutput += t.outputTokens || 0; });
+        }));
+        setSprintStats({ input: totalInput, output: totalOutput, sprints: sprintCount });
+      } catch { setSprintStats(null); }
+      finally   { setSprintLoading(false); }
+    }
+    fetchSprint();
+  }, [hasTokenData]);
+
+  // Aggregate token log by category
+  const TOKEN_TYPES = [
+    { key: 'chat',     label: 'Chat / Briefing',    color: '#a07850' },
+    { key: 'cowork',   label: 'CoWork',              color: '#7a9e7e' },
+    { key: 'code',     label: 'Code / Deploy',       color: '#5b8ab5' },
+    { key: 'monitor',  label: 'Pipeline Monitor',    color: '#8a7ab5' },
+    { key: 'warmpath', label: 'Warm Path',           color: '#b57a7a' },
+    { key: 'api',      label: 'Other API',           color: '#777'    },
+  ];
+
+  // Sonnet 4.6 pricing per token
+  const PRICE = { input: 3e-6, output: 15e-6, cacheWrite: 3.75e-6, cacheRead: 0.3e-6 };
+
+  const byType = {};
+  let grandInput = 0, grandOutput = 0, grandCacheRead = 0, grandCacheWrite = 0;
+  for (const entry of log) {
+    const t = entry.type || 'api';
+    if (!byType[t]) byType[t] = { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, count: 0 };
+    byType[t].input      += entry.inputTokens      || 0;
+    byType[t].output     += entry.outputTokens     || 0;
+    byType[t].cacheRead  += entry.cacheReadTokens  || 0;
+    byType[t].cacheWrite += entry.cacheWriteTokens || 0;
+    byType[t].count++;
+    grandInput      += entry.inputTokens      || 0;
+    grandOutput     += entry.outputTokens     || 0;
+    grandCacheRead  += entry.cacheReadTokens  || 0;
+    grandCacheWrite += entry.cacheWriteTokens || 0;
+  }
+  const grandCost = grandInput * PRICE.input + grandOutput * PRICE.output +
+    grandCacheRead * PRICE.cacheRead + grandCacheWrite * PRICE.cacheWrite;
+
+  const REFERENCE = [
+    { task: 'Morning briefing',        manual: '45 min', josh: '3 min',  saved: '42 min',   unit: 'per run'     },
+    { task: 'Pipeline review',         manual: '20 min', josh: '2 min',  saved: '18 min',   unit: 'per session' },
+    { task: 'Interview research',      manual: '3 hr',   josh: '20 min', saved: '2h 40min', unit: 'per prep'    },
+    { task: 'Scraper + role scoring',  manual: '30 min', josh: '0 min',  saved: '30 min',   unit: 'per day',    auto: true },
+    { task: 'Follow-up email draft',   manual: '20 min', josh: '5 min',  saved: '15 min',   unit: 'per email'   },
+    { task: 'EOD log + sprint update', manual: '15 min', josh: '2 min',  saved: '13 min',   unit: 'per session' },
+  ];
+
+  const GROUPS = [
+    { key: 'briefing', label: 'Morning Briefing', types: ['briefing'],                               color: '#a07850' },
+    { key: 'pipeline', label: 'Pipeline',          types: ['advance','activated','dismissed','added'], color: 'var(--sage)' },
+    { key: 'brief',    label: 'Interview Prep',    types: ['brief'],                                  color: 'var(--navy2)' },
+  ];
+
+  // Anchored to actual search start date — dashboard events only exist since logging began,
+  // so we can't derive weeks from them. This grows correctly as the search continues.
+  const SEARCH_START = new Date('2026-03-24').getTime();
+  const weeks = Math.max(1, Math.round((Date.now() - SEARCH_START) / (7 * 24 * 3600000)));
+
+  // Formula matching the agreed estimate (per week, 5 active days)
+  const estBriefings = 42 * 5 * weeks;        // 210/week
+  const estScraper   = 30 * 5 * weeks;        // 150/week
+  const estPipeline  = 31 * 5 * weeks;        // 155/week (pipeline 18 + EOD 13)
+  const estResearch  = 165 * 2 * weeks;       // 330/week (2.75h × 2 per week)
+  const estTotal     = estBriefings + estScraper + estPipeline + estResearch;
+
+  const fmtH  = (m) => `~${Math.round(m / 60)}h`;
+  const fmtMins = (m) => m >= 60 ? `${Math.floor(m/60)}h${m%60 > 0 ? ` ${m%60}m` : ''}` : `${m}m`;
+
+  const SAVINGS_BY_TYPE = { briefing: 42, advance: 18, activated: 18, dismissed: 2, added: 5, brief: 160 };
+
+  function fmtTime(ts) {
+    const diff = Math.floor((Date.now() - ts) / 60000);
+    if (diff < 1)    return 'just now';
+    if (diff < 60)   return `${diff}m ago`;
+    if (diff < 1440) return `${Math.floor(diff/60)}h ago`;
+    return new Date(ts).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+  }
+
+  return (
+    <div className="log-view">
+
+      <div className="log-section-label">What Josh saves you</div>
+      <table className="savings-table">
+        <thead>
+          <tr>
+            <th>Task</th>
+            <th>You spend</th>
+            <th>Josh takes</th>
+            <th>Saved</th>
+          </tr>
+        </thead>
+        <tbody>
+          {REFERENCE.map(r => (
+            <tr key={r.task}>
+              <td className="task-name">
+                {r.task}
+                {r.auto && <span className="auto-tag">auto</span>}
+              </td>
+              <td>{r.manual}</td>
+              <td style={{color:'var(--text3)'}}>{r.josh}</td>
+              <td className="saved-val">{r.saved} <span style={{fontSize:8,color:'var(--text3)',fontWeight:400}}>{r.unit}</span></td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      <div className="totals-strip">
+        <div>
+          <div className="totals-strip-label">Estimated saved · {weeks}w active search</div>
+          <div className="totals-strip-value">{fmtH(estTotal)}</div>
+        </div>
+        <div className="totals-breakdown">
+          <div className="totals-item">
+            <div className="totals-item-val">{fmtH(estBriefings)}</div>
+            <div className="totals-item-lbl">Briefings</div>
+          </div>
+          <div className="totals-item">
+            <div className="totals-item-val">{fmtH(estScraper)}</div>
+            <div className="totals-item-lbl">Scraper</div>
+          </div>
+          <div className="totals-item">
+            <div className="totals-item-val">{fmtH(estPipeline)}</div>
+            <div className="totals-item-lbl">Pipeline</div>
+          </div>
+          <div className="totals-item">
+            <div className="totals-item-val">{fmtH(estResearch)}</div>
+            <div className="totals-item-lbl">Research</div>
+          </div>
+        </div>
+      </div>
+
+      {/* ── TOKEN COST STRIP ── */}
+      <div className="log-section-label">Cost</div>
+      <div className="cost-strip">
+        {!hasTokenData ? (
+          sprintLoading ? (
+            <div className="cost-loading">Loading token data…</div>
+          ) : !sprintStats || (sprintStats.input + sprintStats.output === 0) ? (
+            <div className="cost-loading">No token data yet — usage is logged automatically each time the agent runs.</div>
+          ) : (() => {
+            const total   = sprintStats.input + sprintStats.output;
+            const costNow = (sprintStats.input * 3 + sprintStats.output * 15) / 1_000_000;
+            const costOpt = (sprintStats.input * 0.8 + sprintStats.output * 4) / 1_000_000;
+            const fmtTok  = n => n >= 1_000_000 ? `${(n/1_000_000).toFixed(1)}M` : `${Math.round(n/1_000)}K`;
+            const fmtUSD  = n => `$${n.toFixed(2)}`;
+            return (
+              <React.Fragment>
+                <div className="cost-strip-left">
+                  <div className="label">Est. spend · {sprintStats.sprints} sprints tracked (sprint board)</div>
+                  <div className="value">{fmtUSD(costNow)}</div>
+                  <div className="sub">Sonnet 4.6 pricing · {fmtTok(total)} total tokens</div>
+                </div>
+                <div className="cost-strip-right">
+                  <div className="cost-item">
+                    <div className="cost-item-val">{fmtTok(sprintStats.input)}</div>
+                    <div className="cost-item-lbl">Input</div>
+                  </div>
+                  <div className="cost-item">
+                    <div className="cost-item-val">{fmtTok(sprintStats.output)}</div>
+                    <div className="cost-item-lbl">Output</div>
+                  </div>
+                  <div className="cost-item">
+                    <div className="cost-item-val">{fmtUSD(costOpt)}</div>
+                    <div className="cost-item-lbl">If Haiku</div>
+                  </div>
+                </div>
+              </React.Fragment>
+            );
+          })()
+        ) : (() => {
+          const fmtTok = n => n >= 1_000_000 ? `${(n/1_000_000).toFixed(1)}M` : n >= 1_000 ? `${Math.round(n/1_000)}K` : String(n);
+          const fmtUSD = n => `$${n < 0.01 ? n.toFixed(4) : n.toFixed(2)}`;
+          const grandTotal = grandInput + grandOutput;
+          const haikuCost  = grandInput * 0.8e-6 + grandOutput * 4e-6;
+          return (
+            <React.Fragment>
+              <div className="cost-strip-left">
+                <div className="label">Est. spend · {log.length} sessions logged</div>
+                <div className="value">{fmtUSD(grandCost)}</div>
+                <div className="sub">Sonnet 4.6 pricing · {fmtTok(grandTotal)} total tokens</div>
+              </div>
+              <div className="cost-strip-right">
+                <div className="cost-item">
+                  <div className="cost-item-val">{fmtTok(grandInput)}</div>
+                  <div className="cost-item-lbl">Input</div>
+                </div>
+                <div className="cost-item">
+                  <div className="cost-item-val">{fmtTok(grandOutput)}</div>
+                  <div className="cost-item-lbl">Output</div>
+                </div>
+                <div className="cost-item">
+                  <div className="cost-item-val">{fmtUSD(haikuCost)}</div>
+                  <div className="cost-item-lbl">If Haiku</div>
+                </div>
+              </div>
+            </React.Fragment>
+          );
+        })()}
+      </div>
+
+      {/* ── TOKEN BREAKDOWN BY CATEGORY ── */}
+      {hasTokenData && (() => {
+        const fmtTok = n => n >= 1_000_000 ? `${(n/1_000_000).toFixed(1)}M` : n >= 1_000 ? `${Math.round(n/1_000)}K` : String(n || 0);
+        const fmtUSD = n => `$${n < 0.01 ? n.toFixed(4) : n.toFixed(2)}`;
+        const activeTypes = TOKEN_TYPES.filter(t => byType[t.key]);
+        return (
+          <React.Fragment>
+            <div className="log-section-label" style={{marginTop:'14px'}}>By category</div>
+            <table style={{width:'100%',borderCollapse:'collapse',fontSize:'11px',fontFamily:'var(--sans)'}}>
+              <thead>
+                <tr style={{color:'var(--text3)',textAlign:'left'}}>
+                  <th style={{padding:'4px 6px',fontWeight:400}}>Category</th>
+                  <th style={{padding:'4px 6px',fontWeight:400,textAlign:'right'}}>Sessions</th>
+                  <th style={{padding:'4px 6px',fontWeight:400,textAlign:'right'}}>Input</th>
+                  <th style={{padding:'4px 6px',fontWeight:400,textAlign:'right'}}>Output</th>
+                  <th style={{padding:'4px 6px',fontWeight:400,textAlign:'right'}}>Cache↓</th>
+                  <th style={{padding:'4px 6px',fontWeight:400,textAlign:'right'}}>Cost</th>
+                </tr>
+              </thead>
+              <tbody>
+                {activeTypes.map(t => {
+                  const d = byType[t.key];
+                  const cost = d.input * PRICE.input + d.output * PRICE.output +
+                    d.cacheRead * PRICE.cacheRead + d.cacheWrite * PRICE.cacheWrite;
+                  return (
+                    <tr key={t.key} style={{borderTop:'1px solid var(--border)'}}>
+                      <td style={{padding:'5px 6px'}}>
+                        <span style={{display:'inline-block',width:6,height:6,borderRadius:'50%',background:t.color,marginRight:6}}/>
+                        {t.label}
+                      </td>
+                      <td style={{padding:'5px 6px',textAlign:'right',color:'var(--text3)'}}>{d.count}</td>
+                      <td style={{padding:'5px 6px',textAlign:'right',color:'var(--text)'}}>{fmtTok(d.input)}</td>
+                      <td style={{padding:'5px 6px',textAlign:'right',color:'var(--text)'}}>{fmtTok(d.output)}</td>
+                      <td style={{padding:'5px 6px',textAlign:'right',color:'var(--text3)'}}>{fmtTok(d.cacheRead)}</td>
+                      <td style={{padding:'5px 6px',textAlign:'right',color:'var(--navy)'}}>{fmtUSD(cost)}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </React.Fragment>
+        );
+      })()}
+
+      {/* ── OPTIMIZATION TIPS ── */}
+      <div className="opt-panel">
+        <div className="opt-header">How to get more from Josh</div>
+        {[
+          {
+            badge: 'Save ~75%',
+            title: 'Use Haiku for quick checks',
+            body: 'Pipeline status, "what\'s overdue?", role scoring — Haiku handles these at ¼ the cost. Ask Claude Code to set model:haiku for lookups.',
+          },
+          {
+            badge: 'Save tokens',
+            title: 'One "morning" message, not five',
+            body: 'Typing "morning" triggers all fetches in parallel (calendar, Gmail, pipeline, news). Asking separately multiplies context overhead.',
+          },
+          {
+            badge: '0 tokens',
+            title: 'Use the dashboard for simple actions',
+            body: 'Advancing a stage, dismissing a role, reviewing a card costs nothing. Reserve Claude for judgment calls and drafting.',
+          },
+          {
+            badge: 'No Opus needed',
+            title: 'Sonnet covers 95% of Josh\'s work',
+            body: 'Opus is 5× more expensive per token. Only worth it for deep competitive research or long-form analysis — and only if you ask explicitly.',
+          },
+          {
+            badge: 'Cut context',
+            title: 'Start fresh sessions for distinct tasks',
+            body: 'Context tokens accumulate fast in long threads. Open a new Claude Code session when switching from briefing to interview prep to pipeline edits.',
+          },
+        ].map(({ badge, title, body }) => (
+          <div className="opt-tip" key={title}>
+            <span className="opt-badge">{badge}</span>
+            <div className="opt-tip-text">
+              <div className="title">{title}</div>
+              <div className="body">{body}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="log-section-label">Activity log</div>
+
+      {activity.length === 0 ? (
+        <div className="log-empty">
+          <strong style={{display:'block',marginBottom:4,color:'var(--text2)'}}>Nothing logged yet.</strong>
+          Activity is recorded automatically as you use the dashboard.
+        </div>
+      ) : GROUPS.map(g => {
+        const events = activity.filter(e => g.types.includes(e.type)).sort((a,b) => b.ts - a.ts);
+        if (!events.length) return null;
+        return (
+          <div className="log-group" key={g.key}>
+            <div className="log-group-header">
+              <span style={{color: g.color}}>{g.label}</span>
+              <span className="log-group-count">{events.length}</span>
+            </div>
+            {events.map((e, i) => (
+              <div className="log-entry" key={i}>
+                <div className={`log-dot ${e.type || 'default'}`} />
+                <div className="log-label">{e.label}</div>
+                <div className="log-time">{fmtTime(e.ts)}</div>
+              </div>
+            ))}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function KanbanCard({ role, warmPaths, onAdvance, onEdit, onBrief, onDragStart, onDragEnd, onDragOver, onDrop }) {
+  const nextStageIdx = STAGES.indexOf(role.stage) + 1;
+  const nextStage = STAGES[nextStageIdx];
+  const wpContacts = warmPaths || [];
+  const wpTop = wpContacts.slice(0, 3);
+  const wpTitle = wpTop.length
+    ? `Top warm paths:\n${wpTop.map(c => `• ${c.firstName} ${c.lastName} — ${c.position}${c.isRecruiter ? ' [HR]' : ''}`).join('\n')}${wpContacts.length > wpTop.length ? `\n…+${wpContacts.length - wpTop.length} more` : ''}`
+    : '';
+  const nba = computeNBA(role);
+  const showBrief = ['Phone Screen', 'Interview Prep', 'Negotiation'].includes(role.stage);
+  return (
+    <div
+      className={`card${role.stage === 'Archived' ? ' card-archived' : ''}`}
+      draggable
+      onDragStart={onDragStart}
+      onDragEnd={onDragEnd}
+      onDragOver={e => { e.preventDefault(); onDragOver(); }}
+      onDrop={e => { e.preventDefault(); onDrop(); }}
+    >
+      <div className="card-top">
+        <div className="card-company">
+          {role.company}
+          {wpContacts.length > 0 && (
+            <span
+              title={wpTitle}
+              style={{
+                marginLeft: 6, fontSize: 10, padding: '1px 6px', borderRadius: 10,
+                background: 'rgba(40, 90, 180, 0.12)', color: '#2a5ca8',
+                border: '1px solid rgba(40, 90, 180, 0.25)', fontWeight: 500,
+                cursor: 'help', verticalAlign: 'middle',
+              }}
+            >🤝 {wpContacts.length}</span>
+          )}
+        </div>
+        <div className={`score ${role.score >= 80 ? 'high' : 'mid'}`}>{role.score}</div>
+      </div>
+      <div className="sector-tag">{role.sector}</div>
+      <div className="card-role">
+        {role.url
+          ? <a href={role.url} target="_blank" rel="noopener noreferrer" style={{color:'inherit',textDecoration:'underline dotted',cursor:'pointer'}}>{role.role}</a>
+          : role.role}
+      </div>
+      <div className="card-dates">
+        <div>
+          <div className="date-label">Last contact</div>
+          <div className="date-val">{role.lastContact || '—'}</div>
+        </div>
+        <div style={{textAlign:'right'}}>
+          <div className="date-label">Next action</div>
+          <div style={{display:'flex',alignItems:'center',gap:5,justifyContent:'flex-end'}}>
+            <div className="date-val">{role.nextAction || '—'}</div>
+            {role.calendarUrl && <a href={role.calendarUrl} target="_blank" rel="noopener noreferrer" title="Open calendar event" style={{fontSize:11,textDecoration:'none',opacity:0.6,lineHeight:1}} onClick={e => e.stopPropagation()}>📅</a>}
+            {role.gmailUrl    && <a href={role.gmailUrl}    target="_blank" rel="noopener noreferrer" title="Open Gmail thread"  style={{fontSize:11,textDecoration:'none',opacity:0.6,lineHeight:1}} onClick={e => e.stopPropagation()}>✉</a>}
+          </div>
+        </div>
+      </div>
+      {role.actionNote && <div className="next-action"><em>→</em> {role.actionNote}</div>}
+      {(() => {
+        // What Josh is preparing for this role: explicit joshPrep (set by the
+        // agent via update_role) wins; otherwise show the stage default.
+        const prep = Array.isArray(role.joshPrep) && role.joshPrep.length > 0
+          ? role.joshPrep
+          : STAGE_PREP[role.stage] || [];
+        return prep.length > 0 && (
+          <div style={{display:'flex',flexWrap:'wrap',alignItems:'center',gap:4,marginTop:6}}>
+            <span style={{fontFamily:'var(--sans)',fontSize:8.5,fontWeight:600,letterSpacing:0.8,
+                          textTransform:'uppercase',color:'var(--text3)'}}>Josh preps</span>
+            {prep.map(t => (
+              <span key={t} style={{fontFamily:'var(--sans)',fontSize:9.5,padding:'2px 7px',
+                                    background:'rgba(122, 158, 126, 0.14)',color:'var(--green)',
+                                    border:'1px solid rgba(122, 158, 126, 0.35)',borderRadius:9}}>{t}</span>
+            ))}
+          </div>
+        );
+      })()}
+      {nba && (
+        <div className={`nba ${nba.urgent ? 'urgent' : 'suggest'}`}>
+          <div className="nba-dot" />
+          {nba.text}
+        </div>
+      )}
+      <div className="card-actions">
+        {nextStage && (
+          <button className="advance-btn" onClick={() => onAdvance(role.id, nextStage)}>
+            Advance to {nextStage} →
+          </button>
+        )}
+        {showBrief && (
+          <button className="brief-btn" onClick={() => onBrief(role)} title="Interview brief">Brief ↗</button>
+        )}
+        <button className="edit-btn" onClick={() => onEdit(role)} title="Edit">✎</button>
+      </div>
+    </div>
+  );
+}
+
+function LoginGate({ onAuth }) {
+  const [value, setValue] = useState('');
+  const [error, setError] = useState(false);
+  const submit = async () => {
+    localStorage.setItem(SECRET_KEY, value.trim());
+    const res = await fetch(API, { headers: authHeaders() }).catch(() => null);
+    if (res && res.ok) { onAuth(); }
+    else { clearSecret(); setError(true); setValue(''); }
+  };
+  return (
+    <div style={{display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',minHeight:'100vh',padding:32,gap:16,background:'var(--bg)'}}>
+      <div style={{fontFamily:'var(--serif)',fontSize:32,fontWeight:500,color:'var(--navy)',letterSpacing:0.5}}>Josh</div>
+      <div style={{fontSize:12,color:'var(--text3)',marginBottom:8}}>Enter your dashboard password</div>
+      <input
+        type="password"
+        value={value}
+        onChange={e => { setValue(e.target.value); setError(false); }}
+        onKeyDown={e => e.key === 'Enter' && submit()}
+        placeholder="Dashboard secret"
+        autoFocus
+        style={{width:'100%',maxWidth:280,padding:'10px 14px',border:`1px solid ${error ? '#dc2626' : 'var(--border2)'}`,borderRadius:8,fontFamily:'var(--sans)',fontSize:14,outline:'none',background:'var(--bg2)'}}
+      />
+      {error && <div style={{fontSize:11,color:'#dc2626'}}>Incorrect password — try again</div>}
+      <button onClick={submit} style={{padding:'10px 28px',background:'var(--navy)',color:'#fff',border:'none',borderRadius:8,fontFamily:'var(--sans)',fontSize:13,cursor:'pointer'}}>
+        Unlock →
+      </button>
+    </div>
+  );
+}
+
+function App() {
+  const [authed, setAuthed] = useState(DEMO || !!getSecret());
+  const [roles, setRoles] = useState([]);
+  const [pending, setPending] = useState([]);
+  const [dismissed, setDismissed] = useState([]);
+  const [lastScrape, setLastScrape] = useState(null);
+  const [loaded, setLoaded] = useState(false);
+  const [briefing, setBriefing] = useState(null);
+  const [briefingDismissed, setBriefingDismissed] = useState(false);
+  const [briefingExpanded, setBriefingExpanded] = useState(false);
+  const [activity, setActivity] = useState([]);
+  const [tokenLog, setTokenLog] = useState([]);
+  const [briefingRole, setBriefingRole] = useState(null);
+  const [warmNetwork, setWarmNetwork] = useState({});  // { company: [contacts] }
+  const [toast, setToast] = useState(null);  // { message, kind } | null
+
+  // Listen for save/network errors dispatched by savePipeline / other helpers.
+  useEffect(() => {
+    const onToast = (e) => {
+      setToast(e.detail);
+      window.clearTimeout(onToast._t);
+      onToast._t = window.setTimeout(() => setToast(null), 6000);
+    };
+    window.addEventListener('josh:toast', onToast);
+    return () => window.removeEventListener('josh:toast', onToast);
+  }, []);
+
+  // Load from KV on mount
+  useEffect(() => {
+    loadPipeline(
+      (r) => setRoles(r),
+      (p) => setPending(p),
+      (d) => setDismissed(d),
+      (b) => { setBriefing(b); if (b) logActivity({ type: 'briefing', label: 'Morning briefing loaded' }); },
+      (a) => setActivity(a),
+      (tl) => setTokenLog(tl)
+    ).then((ok) => { if (ok) setLoaded(true); });
+  }, []);
+
+  // Check Gmail connection status
+  useEffect(() => {
+    if (DEMO) { setGmailConnected(true); return; }
+    fetch('/api/gmail?action=status')
+      .then(r => r.json())
+      .then(d => setGmailConnected(d.connected || false))
+      .catch(() => setGmailConnected(false));
+  }, []);
+
+  // Load warm-path network (LinkedIn 1st-degree connections at target companies)
+  useEffect(() => {
+    if (DEMO) { setWarmNetwork(DEMO_DATA.warmNetwork); return; }
+    fetch('/api/warmpath', { headers: authHeaders() })
+      .then(r => r.ok ? r.json() : null)
+      .then(d => {
+        // Summary endpoint returns { summary: { company: count } } but we want the
+        // full contacts per company for the card tooltips. Fetch each target with
+        // a known count so tooltips have names. Cheaper: one request per unique
+        // pipeline company on demand. For now, do a follow-up batch fetch.
+        if (!d || !d.summary) return;
+        const companies = Object.keys(d.summary);
+        Promise.all(companies.map(c =>
+          fetch(`/api/warmpath?company=${encodeURIComponent(c)}`, { headers: authHeaders() })
+            .then(r => r.ok ? r.json() : null)
+            .then(res => [c, (res && res.contacts) || []])
+            .catch(() => [c, []])
+        )).then(pairs => setWarmNetwork(Object.fromEntries(pairs)));
+      })
+      .catch(() => {});
+  }, []);
+
+  // Save roles to KV whenever they change (after initial load)
+  useEffect(() => {
+    if (loaded) savePipeline({ roles });
+  }, [roles, loaded]);
+
+  // Save pending to KV whenever it changes (after initial load)
+  useEffect(() => {
+    if (loaded) savePipeline({ pending });
+  }, [pending, loaded]);
+
+  // Save dismissed to KV whenever it changes (after initial load)
+  useEffect(() => {
+    if (loaded) savePipeline({ dismissed });
+  }, [dismissed, loaded]);
+  const logActivity = (event) => {
+    const entry = { ts: Date.now(), ...event };
+    setActivity(prev => {
+      const next = [...prev, entry].slice(-200);
+      savePipeline({ activityAppend: [entry] });
+      return next;
+    });
+  };
+
+  const [view, setView] = useState('Kanban');
+  const [filter, setFilter] = useState('All');
+  const [activeStage, setActiveStage] = useState(null);
+  const [showScore, setShowScore] = useState(false);
+  const [showScraper, setShowScraper] = useState(false);
+  const [showAdd, setShowAdd] = useState(false);
+  const [editingRole, setEditingRole] = useState(null);
+  const [dragId, setDragId] = useState(null);
+  const [dragOverId, setDragOverId] = useState(null);
+  const [mcDismissed, setMcDismissed] = useState(false);
+  const [gmailConnected, setGmailConnected] = useState(null);
+  const [skipTarget, setSkipTarget] = useState(null);
+  const [showWarmth, setShowWarmth] = useState(false);
+
+  const filtered = roles.filter(r =>
+    (filter === 'All' || r.sector === filter) &&
+    (!activeStage || r.stage === activeStage)
+  );
+
+  const stageCounts = STAGES.reduce((acc, s) => {
+    acc[s] = roles.filter(r => r.sector === filter || filter === 'All').filter(r => r.stage === s).length;
+    return acc;
+  }, {});
+
+  const advance = (id, nextStage) => {
+    const role = roles.find(r => r.id === id);
+    setRoles(rs => rs.map(r => r.id === id ? { ...r, stage: nextStage } : r));
+    if (role) logActivity({ type: 'advance', label: `${role.company} → ${nextStage}` });
+  };
+
+  const approvePending = (pid) => {
+    const p = pending.find(x => x.id === pid);
+    if (p) {
+      const today = new Date();
+      const fmt = d => d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+      const nextWeek = new Date(today); nextWeek.setDate(today.getDate() + 7);
+      setRoles(rs => [...rs, { ...p, id: crypto.randomUUID(), stage: 'Prospecting', lastContact: '—', nextAction: fmt(nextWeek),
+        actionNote: p.kind === 'signal'
+          ? (p.suggestedAction || p.thesis || 'Watching — no posting yet')
+          : 'Flagged by Josh — review' }]);
+      setPending(ps => ps.filter(x => x.id !== pid));
+      logActivity({ type: 'activated',
+        label: p.kind === 'signal'
+          ? `Watching ${p.company} · ${p.headline}`
+          : `Activated ${p.company} · ${p.role}` });
+    }
+  };
+
+  const dismissPending = (pid, reason = null) => {
+    const p = pending.find(x => x.id === pid);
+    if (p) {
+      const fingerprint = `${p.company}::${p.role}`.toLowerCase();
+      setDismissed(ds => ds.includes(fingerprint) ? ds : [...ds, fingerprint]);
+      if (reason) {
+        savePipeline({ skip: { company: p.company, role: p.role, reason, ts: Date.now() } });
+      }
+      logActivity({ type: 'dismissed', label: `Skipped ${p.company} · ${p.role}${reason ? ` (${reason})` : ''}` });
+    }
+    setPending(ps => ps.filter(x => x.id !== pid));
+  };
+
+  const addRole = (role) => {
+    setRoles(rs => [...rs, role]);
+    logActivity({ type: 'added', label: `Added ${role.company} · ${role.role}` });
+  };
+  const editRole   = (updated) => setRoles(rs => rs.map(r => r.id === updated.id ? updated : r));
+  const deleteRole = (id)      => setRoles(rs => rs.filter(r => r.id !== id));
+
+  const handleDrop = (targetId) => {
+    if (!dragId || dragId === targetId) return;
+    setRoles(rs => {
+      const arr = [...rs];
+      const from = arr.findIndex(r => r.id === dragId);
+      const to = arr.findIndex(r => r.id === targetId);
+      if (arr[from].stage !== arr[to].stage) return arr;
+      const [item] = arr.splice(from, 1);
+      arr.splice(to, 0, item);
+      return arr;
+    });
+    setDragId(null);
+    setDragOverId(null);
+  };
+
+  const kanbanStages = activeStage ? [activeStage] : STAGES.slice(0, 2);
+
+  if (!authed) return <LoginGate onAuth={() => setAuthed(true)} />;
+
+  return (
+    <>
+      {toast && (
+        <div
+          role="status"
+          onClick={() => setToast(null)}
+          style={{
+            position: 'fixed',
+            top: 14,
+            left: '50%',
+            transform: 'translateX(-50%)',
+            zIndex: 9999,
+            maxWidth: '92vw',
+            padding: '10px 14px',
+            borderRadius: 8,
+            fontFamily: 'var(--sans)',
+            fontSize: 13,
+            lineHeight: 1.35,
+            cursor: 'pointer',
+            boxShadow: '0 6px 20px rgba(0,0,0,0.15)',
+            background: toast.kind === 'error' ? '#dc2626' : '#1f2937',
+            color: '#fff',
+          }}
+        >
+          {toast.message}
+        </div>
+      )}
+      <div className="topbar">
+        <div className="topbar-row">
+          <span className="topbar-title">Josh</span>
+          {DEMO && (
+            <span title="Nothing on this screen is a real opportunity, application or contact."
+                  style={{marginLeft:10,padding:'3px 10px',borderRadius:999,
+                          fontFamily:'var(--sans)',fontSize:9.5,fontWeight:600,
+                          letterSpacing:'0.11em',textTransform:'uppercase',
+                          color:'#fff',background:'rgba(255,255,255,0.22)',
+                          border:'1px solid rgba(255,255,255,0.75)',whiteSpace:'nowrap'}}>
+              Demo data · fictional
+            </span>
+          )}
+          <span className="topbar-date">{new Date().toLocaleDateString('en-GB', {day:'numeric',month:'short',year:'numeric'})}</span>
+        </div>
+        <div className="topbar-row">
+          <span className="topbar-sub">{roles.length} opportunities</span>
+          <div style={{display:'flex',gap:6}}>
+            <button className="score-link" onClick={() => setShowScore(true)}>how we score ↗</button>
+            <button className="score-link" onClick={() => setShowScraper(true)}>scraper ↗</button>
+            <button className="score-link" onClick={() => window.open('/about','_blank')}>about ↗</button>
+            <button className="score-link" onClick={() => setView(v => v === 'Log' ? 'Kanban' : 'Log')} style={{background: view==='Log' ? 'rgba(255,255,255,0.25)' : 'rgba(255,255,255,0.10)', borderColor: 'rgba(255,255,255,0.7)', fontWeight: view==='Log' ? 600 : 400}}>log ↗</button>
+          </div>
+        </div>
+      </div>
+
+      {briefing && !briefingDismissed && (
+        <div className="briefing-card">
+          <div className="briefing-header" onClick={() => setBriefingExpanded(e => !e)}>
+            <div className="briefing-header-left">
+              <span className="briefing-label">Morning briefing</span>
+              {briefing.ts && <span className="briefing-time">{new Date(briefing.ts).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}</span>}
+              {!briefingExpanded && briefing.text && (
+                <span className="briefing-preview">{briefing.text.split('\n').find(l => l.trim()) || ''}</span>
+              )}
+            </div>
+            <div className="briefing-actions">
+              <span className={`briefing-chevron${briefingExpanded ? ' open' : ''}`}>▾</span>
+              <button className="briefing-close" onClick={e => { e.stopPropagation(); setBriefingDismissed(true); }}>×</button>
+            </div>
+          </div>
+          <div className={`briefing-body${briefingExpanded ? ' expanded' : ' collapsed'}`}>
+            <div className="briefing-text">{briefing.text}</div>
+          </div>
+        </div>
+      )}
+
+      <div style={{padding:'0 16px', marginBottom:14}}>
+        <div className="pending-header-row" style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:8}}>
+          <div className="pending-header">
+            {pending.length > 0 ? `Josh suggests (${pending.length})` : 'Opportunities today'}
+          </div>
+          <button className="manual-add-btn" onClick={() => setShowAdd(true)}>+ Add manually</button>
+        </div>
+        {pending.length === 0 ? (
+          <div className="pending-empty">
+            <strong>Nothing new to review.</strong>
+            Next scan at 7:00 AM — go enjoy your evening.
+          </div>
+        ) : (
+          <div className="pending-grid">
+            {pending.map(p => (
+              <div className={`pending-card${p.kind === 'signal' ? ' signal' : ''}`} key={p.id}>
+                <div className="pending-info">
+                  <div className="pending-company">
+                    {p.company}
+                    {p.kind === 'signal' && (
+                      <span className="signal-chip">Signal · {SIGNAL_LABELS[p.signalType] || 'market'}</span>
+                    )}
+                  </div>
+                  {p.kind === 'signal' ? (
+                    <>
+                      <div className="pending-role signal-headline">{p.headline}</div>
+                      <div className="signal-thesis">→ {p.thesis}</div>
+                      <div className="pending-meta">
+                        {p.location} · {p.confidence} confidence
+                        {p.warmPaths > 0 && <> · {p.warmPaths} warm path{p.warmPaths > 1 ? 's' : ''}</>}
+                        {p.foundAt && <> · spotted {new Date(p.foundAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}</>}
+                      </div>
+                      <div className="signal-evidence">
+                        Evidence:{' '}
+                        {(p.evidence || []).map((e, i) => (
+                          <span key={i}>
+                            {i > 0 && ', '}
+                            <a href={e.url} target="_blank" rel="noopener noreferrer">{e.source}</a>
+                            {e.date && ` · ${e.date}`}
+                          </span>
+                        ))}
+                      </div>
+                      <div className="signal-note">No posting yet. {p.suggestedAction}</div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="pending-role">{p.url ? <a href={p.url} target="_blank" rel="noopener noreferrer">{p.role}</a> : p.role}</div>
+                      <div className="pending-meta">
+                        {p.location} · {p.source}
+                        {p.scrapedAt && <> · scraped {new Date(p.scrapedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}</>}
+                      </div>
+                      {p.url && (
+                        <a href={p.url} target="_blank" rel="noopener noreferrer"
+                           style={{display: 'inline-block', marginTop: 5, fontSize: 10.5,
+                                   fontFamily: 'var(--sans)', color: 'var(--navy)',
+                                   textDecoration: 'none', borderBottom: '1px dashed var(--navy)'}}>
+                          View job description ↗
+                        </a>
+                      )}
+                    </>
+                  )}
+                </div>
+                <div style={{display:'flex',flexDirection:'column',alignItems:'flex-end',gap:6}}>
+                  <div className="pending-score">{p.score}</div>
+                  {skipTarget === p.id ? (
+                    <div className="skip-reasons">
+                      <div className="skip-reasons-label">Why skip?</div>
+                      {['Duplicate','Too junior','Wrong location','Not relevant'].map(r => (
+                        <button key={r} className="skip-reason-btn" onClick={() => { dismissPending(p.id, r); setSkipTarget(null); }}>{r}</button>
+                      ))}
+                      <button className="skip-reason-btn cancel" onClick={() => setSkipTarget(null)}>← cancel</button>
+                    </div>
+                  ) : (
+                    <div className="pending-btns">
+                      <button className="pend-btn yes" onClick={() => approvePending(p.id)}>
+                        {p.kind === 'signal' ? 'Watch' : '+ Add'}
+                      </button>
+                      <button className="pend-btn no" onClick={() => setSkipTarget(p.id)}>Skip</button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <div className="nav">
+        <div className="view-toggle">
+          {['Kanban','Funnel','Table'].map(v => (
+            <button key={v} className={`view-btn ${view===v?'active':''}`} onClick={() => setView(v)}>{v}</button>
+          ))}
+          <button className="view-btn" onClick={() => setShowWarmth(true)} title="Top 25 warm paths across target companies">
+            Warmth
+          </button>
+        </div>
+        {gmailConnected === false && (
+          <button className="gmail-link" onClick={() => {
+            fetch('/api/gmail?action=auth').then(r => r.json()).then(d => {
+              if (d.url) window.open(d.url, '_self');
+              else alert('Gmail not configured — add GOOGLE_CLIENT_ID to Vercel env vars.');
+            });
+          }}>Connect Gmail ↗</button>
+        )}
+      </div>
+
+      {view !== 'Log' && <div className="filters">
+        {SECTORS.map(s => (
+          <button key={s} className={`filter-pill ${filter===s?'active':''}`} onClick={() => setFilter(s)}>{s}</button>
+        ))}
+      </div>}
+
+      {view !== 'Log' && <div className="stage-tiles">
+        {STAGES.map(s => (
+          <div key={s} className={`tile ${activeStage===s?'active':''}`} onClick={() => setActiveStage(activeStage===s?null:s)}>
+            <div className="tile-num">{stageCounts[s] || 0}</div>
+            <div className="tile-label">{s}</div>
+          </div>
+        ))}
+      </div>}
+
+      {view === 'Kanban' && (
+        <div className="kanban">
+          {(activeStage ? [activeStage] : STAGES).map(stage => {
+            const stageRoles = filtered.filter(r => r.stage === stage);
+            return (
+              <div key={stage} className={stage === 'Archived' ? 'col-archived' : ''}>
+                <div className="col-header">
+                  <div className="col-title">{stage} <span className="col-count">{stageRoles.length}</span></div>
+                </div>
+                {stageRoles.map(role => (
+                  <KanbanCard
+                    key={role.id}
+                    role={role}
+                    warmPaths={warmNetwork[role.company] || []}
+                    onAdvance={advance}
+                    onEdit={setEditingRole}
+                    onBrief={role => { setBriefingRole(role); logActivity({ type: 'brief', label: `Interview brief opened · ${role.company}` }); }}
+                    onDragStart={() => setDragId(role.id)}
+                    onDragEnd={() => { setDragId(null); setDragOverId(null); }}
+                    onDragOver={() => setDragOverId(role.id)}
+                    onDrop={() => handleDrop(role.id)}
+                  />
+                ))}
+
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {view === 'Funnel' && (
+        <div className="funnel-view">
+          {STAGES.map(stage => {
+            const stageRoles = roles.filter(r => (filter==='All'||r.sector===filter) && r.stage===stage);
+            const pct = Math.round((stageRoles.length / Math.max(roles.length, 1)) * 100);
+            return (
+              <div className="funnel-stage" key={stage}>
+                <div className="funnel-stage-header">
+                  <div className="funnel-stage-name">{stage}</div>
+                  <div className="funnel-bar-bg"><div className="funnel-bar" style={{width:`${pct}%`}} /></div>
+                  <div className="funnel-count">{stageRoles.length}</div>
+                </div>
+                <div className="funnel-cards">
+                  {stageRoles.map(r => (
+                    <div className="funnel-card" key={r.id}>
+                      <div className="funnel-card-left">
+                        <div className="company">{r.company}</div>
+                        <div className="role">{r.role}</div>
+                      </div>
+                      <div className="funnel-card-right">
+                        <span className="sector-tag">{r.sector}</span>
+                        <span className={`score ${r.score>=80?'high':'mid'}`}>{r.score}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {view === 'Table' && (
+        <div className="table-view">
+          <table className="data-table">
+            <thead>
+              <tr>
+                <th>Company</th>
+                <th>Role</th>
+                <th>Stage</th>
+                <th>Score</th>
+                <th>Next</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filtered.sort((a,b) => b.score - a.score).map(r => (
+                <tr key={r.id}>
+                  <td style={{fontWeight:500}}>{r.company}</td>
+                  <td style={{color:'var(--text2)',maxWidth:120,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{r.role}</td>
+                  <td><span className="stage-badge">{r.stage}</span></td>
+                  <td style={{fontFamily:'var(--mono)',color:r.score>=80?'var(--gold)':'var(--text2)'}}>{r.score}</td>
+                  <td style={{fontFamily:'var(--mono)',color:'var(--text2)'}}>{r.nextAction || '—'}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {view === 'Log' && <LogView activity={activity} roles={roles} tokenLog={tokenLog} />}
+
+      {showScore && <ScoreOverlay onClose={() => setShowScore(false)} />}
+      {showScraper && <ScraperOverlay onClose={() => setShowScraper(false)} />}
+      {showWarmth && <WarmthOverlay network={warmNetwork} onClose={() => setShowWarmth(false)} />}
+      {showAdd && <AddModal onClose={() => setShowAdd(false)} onAdd={addRole} />}
+      {editingRole && <EditModal role={editingRole} onClose={() => setEditingRole(null)} onSave={editRole} onDelete={deleteRole} />}
+      {briefingRole && <BriefModal role={briefingRole} onClose={() => setBriefingRole(null)} />}
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+<script>
+  // Register the service worker so Chrome/Android show the "install" prompt.
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js').catch(() => {});
+    });
+  }
+</script>
+</body>
+</html>

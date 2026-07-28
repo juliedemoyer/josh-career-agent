@@ -1,0 +1,22 @@
+{
+  "rewrites": [
+    { "source": "/", "destination": "/app.html" },
+    { "source": "/about", "destination": "/about.html" },
+    { "source": "/api/pipeline", "destination": "/api/pipeline.js" },
+    { "source": "/api/gmail", "destination": "/api/gmail.js" },
+    { "source": "/api/gmail-webhook", "destination": "/api/gmail-webhook.js" },
+    { "source": "/api/pipeline-monitor", "destination": "/api/pipeline-monitor.js" }
+  ],
+  "functions": {
+    "api/gmail.js":            { "maxDuration": 60 },
+    "api/gmail-webhook.js":    { "maxDuration": 60 },
+    "api/pipeline-monitor.js": { "maxDuration": 60 },
+    "api/scrape.js":           { "maxDuration": 60 }
+  },
+  "crons": [
+    { "path": "/api/scrape", "schedule": "0 5 * * *" },
+    { "path": "/api/gmail", "schedule": "0 7 * * *" },
+    { "path": "/api/pipeline-monitor", "schedule": "0 9 * * *" },
+    { "path": "/api/gmail?action=renew-watch", "schedule": "0 6 * * 1" }
+  ]
+}

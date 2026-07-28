@@ -1,0 +1,70 @@
+{
+  "minScore": 60,
+
+  "seniority": {
+    "high": [
+      "chief", "c-suite", "cxo", "cdao", "cdo", "cto", "cio", "cco", "cmo", "cro", "president",
+      "vp", "vice president", "svp", "evp",
+      "chief data officer", "chief digital officer", "chief commercial officer",
+      "chief analytics officer", "chief marketing officer", "chief revenue officer",
+      "chief ai officer", "chief information officer", "chief technology officer",
+      "chief operating officer", "chief experience officer"
+    ],
+    "mid": ["director", "head of", "senior director", "general manager"],
+    "highPoints": 25,
+    "midPoints": 15
+  },
+
+  "titleExcludes": [
+    "executive assistant", "assistant to", "personal assistant",
+    "senior manager", "manager,", "associate director", "associate ",
+    "coordinator", "specialist", "analyst", "engineer", "developer",
+    "intern", "trainee", "apprentice", "junior",
+    "accountant", "accounting", "bookkeeper",
+    "recruiter", "talent acquisition",
+    "skip to main", "skip to content", "cookie", "privacy",
+    "negotiate with", "responsible for", "you will"
+  ],
+
+  "aiDataKeywords": {
+    "keywords": ["ai", "artificial intelligence", "data", "machine learning", "ml", "analytics", "genai", "generative", "llm", "deep learning", "data science", "intelligence"],
+    "pointsPerHit": 7,
+    "maxPoints": 20
+  },
+
+  "commercialKeywords": [
+    "commercial", "digital transformation", "growth", "revenue", "consumer",
+    "brand", "marketing", "ecommerce", "e-commerce", "omnichannel", "strategy",
+    "customer experience", "cx", "personalisation", "personalization",
+    "digital", "transformation", "innovation", "business development",
+    "go-to-market", "gtm", "partnerships", "marketplace"
+  ],
+
+  "sectorKeywords": {
+    "points": 20,
+    "groups": {
+      "luxury": ["luxury", "beauty", "cosmetics", "fashion", "jewellery", "jewelry", "fragrance", "consumer"],
+      "retail": ["retail", "ecommerce", "e-commerce", "marketplace", "omnichannel", "stores"],
+      "tech": ["technology", "cloud", "platform", "software", "saas", "digital"],
+      "fmcg": ["fmcg", "cpg", "consumer goods", "food", "beverage", "household"]
+    }
+  },
+
+  "_geography_comment": "Edit `allowed`/`preferred`/`cities` to match where YOU are willing to relocate to or work remotely from. Roles whose location doesn't match `allowed` are hard-rejected (score 0) regardless of seniority.",
+  "geography": {
+    "points": 15,
+    "preferredPoints": 15,
+    "okPoints": 8,
+    "allowed": ["paris", "london", "new york", "nyc", "hong kong", "hongkong", "france", "united kingdom", "uk", "england", "remote"],
+    "preferred": ["paris", "london", "new york", "nyc", "hong kong", "hongkong", "remote"],
+    "ok": ["france", "united kingdom", "uk", "england"],
+    "cities": ["Paris", "London", "New York", "NYC", "Hong Kong", "Remote"]
+  },
+
+  "plKeywords": {
+    "points": 10,
+    "keywords": ["p&l", "revenue", "commercial", "budget", "growth", "sales", "business development", "ecommerce", "e-commerce", "omnichannel", "brand", "marketing", "consumer"]
+  },
+
+  "companyAmbitionPoints": 10
+}

@@ -1,0 +1,10 @@
+{
+  "name": "josh-career-agent",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Josh — an autonomous executive job search agent: career-page scraper, scoring, dashboard, and daily Claude-powered briefings.",
+  "scripts": {
+    "add-company": "node scripts/add-company.js"
+  }
+}

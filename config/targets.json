@@ -1,0 +1,97 @@
+{
+  "$schema": "./targets.schema.json",
+  "_comment": "Example target set only — a plausible retail / consumer-brands search across luxury, beauty, mass retail, FMCG, sports, and e-commerce, chosen to demonstrate every parser type. Replace with your own companies (npm run add-company). Career page URLs change often: verify each one before relying on it (docs/ADAPTERS.md shows how to test a target in isolation).",
+  "targets": [
+    {
+      "company": "Burberry",
+      "sector": "Luxury",
+      "url": "https://careers.burberry.com/",
+      "parser": "generic"
+    },
+    {
+      "company": "Prada Group",
+      "sector": "Luxury",
+      "url": "https://www.pradagroup.com/en/careers.html",
+      "parser": "generic"
+    },
+    {
+      "company": "Tapestry",
+      "sector": "Luxury",
+      "url": "https://tapestry.wd1.myworkdayjobs.com/wday/cxs/tapestry/TapestryCareers/jobs",
+      "baseUrl": "https://tapestry.wd1.myworkdayjobs.com/en-US/TapestryCareers",
+      "parser": "workday"
+    },
+    {
+      "company": "Coty",
+      "sector": "Beauty",
+      "url": "https://careers.coty.com/",
+      "parser": "generic"
+    },
+    {
+      "company": "Estée Lauder",
+      "sector": "Beauty",
+      "url": "https://www.elcompanies.com/en/careers",
+      "parser": "generic"
+    },
+    {
+      "company": "Glossier",
+      "sector": "Beauty",
+      "url": "https://boards.greenhouse.io/glossier",
+      "parser": "greenhouse"
+    },
+    {
+      "company": "Inditex",
+      "sector": "Retail",
+      "url": "https://www.inditexcareers.com/",
+      "parser": "generic"
+    },
+    {
+      "company": "Decathlon",
+      "sector": "Retail",
+      "url": "https://jobs.decathlon.co.uk/",
+      "parser": "generic"
+    },
+    {
+      "company": "Mattel",
+      "sector": "Retail",
+      "url": "https://jobs.mattel.com/",
+      "parser": "generic"
+    },
+    {
+      "company": "Unilever",
+      "sector": "FMCG",
+      "url": "https://careers.unilever.com/en/search-jobs",
+      "parser": "generic"
+    },
+    {
+      "company": "Danone",
+      "sector": "FMCG",
+      "url": "https://careers.danone.com/en-global/jobs.html",
+      "parser": "generic"
+    },
+    {
+      "company": "Reckitt",
+      "sector": "FMCG",
+      "url": "https://careers.reckitt.com/search/?q=data+AI&locationsearch=europe",
+      "parser": "generic"
+    },
+    {
+      "company": "On Running",
+      "sector": "Sports",
+      "url": "https://culture.on-running.com/jobs",
+      "parser": "generic"
+    },
+    {
+      "company": "Adidas",
+      "sector": "Sports",
+      "url": "https://careers.adidas-group.com/",
+      "parser": "generic"
+    },
+    {
+      "company": "Back Market",
+      "sector": "E-commerce",
+      "url": "https://jobs.lever.co/backmarket",
+      "parser": "lever"
+    }
+  ]
+}

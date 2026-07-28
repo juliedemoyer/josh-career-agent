@@ -1,0 +1,31 @@
+{
+  "_comment": "Reference universe: ~50 large European and global retail / consumer companies, grouped by sector. This file is NOT read by the scraper. It is a picking list: choose the companies that fit your search and activate each one with `npm run add-company`, which appends it to config/targets.json with the right parser. Keeping the active scrape set small (10-20) keeps runs fast and results reviewable.",
+  "universe": {
+    "Luxury": [
+      "LVMH", "Kering", "Richemont", "Hermès", "Burberry", "Ralph Lauren", "Puig"
+    ],
+    "Beauty": [
+      "L'Oréal", "Estée Lauder", "Beiersdorf", "Coty", "Haleon", "Essity"
+    ],
+    "FMCG": [
+      "Unilever", "Nestlé", "Danone", "Reckitt", "Henkel", "Ferrero", "Barilla",
+      "Lavazza", "Lotus Bakeries", "Arla", "Nespresso"
+    ],
+    "Beverages": [
+      "AB InBev", "Heineken", "Carlsberg", "Diageo", "Pernod Ricard", "Campari"
+    ],
+    "Grocery & Mass Retail": [
+      "Carrefour", "Tesco", "Sainsbury's", "Ahold Delhaize", "Colruyt",
+      "Jerónimo Martins", "Marks & Spencer", "Kingfisher", "Fnac Darty", "IKEA"
+    ],
+    "Fashion & Sports Retail": [
+      "Inditex", "H&M", "Mango", "Decathlon", "Adidas", "On Running", "LEGO", "Mattel"
+    ],
+    "E-commerce & Digital": [
+      "Zalando", "ASOS", "Ocado", "HelloFresh", "Back Market", "Glossier"
+    ],
+    "Services": [
+      "Sodexo"
+    ]
+  }
+}

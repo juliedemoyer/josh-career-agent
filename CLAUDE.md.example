@@ -1,0 +1,98 @@
+# Josh — Operational Procedures (example)
+
+This is optional. The deployed agent (`api/agent.js`, running via Vercel
+Cron) works without this file — it's a self-contained system prompt built
+from `config/profile.json`. This file is for a different use case: running
+**Claude Code interactively** against your own repo/vault to do more
+open-ended work (deep interview prep, market research, weekly reviews) than
+the cron-triggered agent is scoped for.
+
+If you don't use Claude Code interactively for your job search, delete this
+file — it changes nothing about how the deployed dashboard/scraper/agent
+behave.
+
+Copy this to `CLAUDE.md` in your repo root and fill in the bracketed parts.
+
+---
+
+## Config source of truth
+
+Read `config/profile.json`, `config/targets.json`, and `config/rubric.json`
+before any pipeline-related task — do not hardcode your seniority level,
+target companies, or scoring weights into this file. Edit the JSON configs
+instead, so the deployed agent and any interactive Claude Code session stay
+in sync.
+
+## Live Pipeline API
+
+At the start of any conversation where pipeline status is relevant, fetch:
+
+```
+GET https://<your-deployment>.vercel.app/api/pipeline
+Header: x-dashboard-secret: $DASHBOARD_SECRET
+```
+
+Response contains `roles` (active pipeline) and `pending` (scouted, not yet
+approved). Sort by `score` descending. Flag any overdue `nextAction` dates.
+
+**Writes:** `POST /api/pipeline` with the full updated `{roles, pending}`
+body. New role ids: generate a UUID. Persist after any mutation.
+
+## Pipeline stages
+
+Use whatever you set in `config/profile.json`'s `pipelineStages` array —
+the shipped default is: Prospecting → Applied → Phone Screen →
+Interview Prep → Negotiation.
+
+## Morning briefing (example structure)
+
+If you want an interactive Claude Code session to compose a daily briefing
+(distinct from the automated `set_briefing` the cron agent writes), a
+reasonable structure:
+
+1. **Today's agenda** — calendar + any `nextAction` due today/tomorrow
+2. **Pipeline pulse** — totals by stage, flag stalled/overdue roles
+3. **Overnight scraper hits** — new roles scored 60+ (or your `minScore`)
+4. **News and signals** — anything relevant to active target companies
+5. **Recommended actions** — max 3, concrete, sequenced
+
+Keep it readable on a phone in under two minutes — that was the design
+constraint behind the section limits above.
+
+## Adding a company to the scraper
+
+Prefer `npm run add-company` (interactive script) over hand-editing
+`config/targets.json` unless you're doing something the script doesn't
+support yet (custom `exclude` patterns, Workday facets).
+
+## Model routing (if you use Claude Code for adjacent research)
+
+| Task | Model |
+|---|---|
+| Fetch/parse JSON, calendar events, email headers | Haiku |
+| Score/filter against the rubric | Haiku |
+| Summarize news, research | Sonnet |
+| Synthesis, planning, anything requiring judgment | Sonnet |
+
+Default to a cheaper model for retrieval/filtering; reserve larger models
+for synthesis and judgment calls.
+
+## End of day (optional)
+
+If you keep a personal notes vault (Obsidian or similar) and want a daily
+log of what happened, a minimal template:
+
+```markdown
+---
+date: YYYY-MM-DD
+---
+
+## Done today
+- [pipeline moves, outreach sent, prep completed]
+
+## Open loops
+- [anything unresolved — include company name and context]
+
+## Tomorrow's priority
+- [the single most important next action]
+```

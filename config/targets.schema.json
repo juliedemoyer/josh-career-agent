@@ -1,0 +1,27 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Scraper targets",
+  "type": "object",
+  "required": ["targets"],
+  "properties": {
+    "targets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["company", "sector", "url", "parser"],
+        "properties": {
+          "company": { "type": "string" },
+          "sector":  { "type": "string" },
+          "url":     { "type": "string" },
+          "parser":  { "type": "string", "enum": ["generic", "lever", "greenhouse", "amazon", "workday", "microsoft", "meta", "richemont"] },
+          "baseUrl": { "type": "string", "description": "Required for parser: workday — used to build full job links from externalPath" },
+          "brand":   { "type": "string", "description": "Optional brand filter, used by the richemont parser (e.g. \"cartier\")" },
+          "exclude": { "type": "array", "items": { "type": "string" }, "description": "Substrings to reject in generic parser results (nav links, policy pages, etc.)" },
+          "workdayFacets":  { "type": "object", "description": "Workday appliedFacets payload — see docs/ADAPTERS.md" },
+          "workdayLimit":   { "type": "number" },
+          "workdayMaxPages": { "type": "number" }
+        }
+      }
+    }
+  }
+}

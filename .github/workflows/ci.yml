@@ -1,0 +1,52 @@
+name: CI
+
+# JOSH has no dependencies and no build step, so CI is a syntax and config
+# gate: every JS file must parse, and every JSON config must be valid. This
+# runs in seconds and catches the failure mode that actually bites a
+# scheduled agent — a typo shipped to a cron that only runs at 06:00.
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  check:
+    name: syntax + config
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Parse every JavaScript file
+        run: |
+          fail=0
+          for f in $(git ls-files '*.js'); do
+            node --check "$f" || { echo "::error file=$f::syntax error"; fail=1; }
+          done
+          exit $fail
+
+      - name: Validate every JSON file
+        run: |
+          fail=0
+          for f in $(git ls-files '*.json'); do
+            jq empty "$f" || { echo "::error file=$f::invalid JSON"; fail=1; }
+          done
+          exit $fail
+
+      - name: Validate vercel.json cron entries
+        run: |
+          jq -e '
+            (.crons // [])
+            | all(
+                (.path      | type == "string" and length > 0) and
+                (.schedule  | split(" ") | map(select(length > 0)) | length == 5)
+              )
+          ' vercel.json > /dev/null \
+            || { echo "::error file=vercel.json::a cron entry is missing path/schedule or has a malformed 5-field expression"; exit 1; }
+          echo "ok — $(jq '(.crons // []) | length' vercel.json) cron(s) validated"

@@ -1,6 +1,9 @@
 # JOSH · Your Career Transition Agent
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![CI](https://img.shields.io/github/actions/workflow/status/juliedemoyer/josh-career-agent/ci.yml?branch=main&style=flat-square&label=CI)](https://github.com/juliedemoyer/josh-career-agent/actions/workflows/ci.yml)
+[![License](https://img.shields.io/badge/license-MIT-blue?style=flat-square)](LICENSE)
+[![Built with Claude Code](https://img.shields.io/badge/built%20with-Claude%20Code-d97757?style=flat-square)](https://claude.com/claude-code)
+[![Last commit](https://img.shields.io/github/last-commit/juliedemoyer/josh-career-agent?style=flat-square&label=updated)](https://github.com/juliedemoyer/josh-career-agent/commits/main)
 
 An open-source, autonomous Claude Code agent that runs a real executive job
 search: it scrapes career pages daily, scores roles against your rubric,

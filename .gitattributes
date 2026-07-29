@@ -1,0 +1,12 @@
+# GitHub Linguist overrides.
+#
+# public/app.html is a single-file React app: ~80KB of JSX inside a
+# <script type="text/babel"> block plus ~33KB of inline CSS. Linguist counts
+# the whole file as HTML and does not look inside script tags, so those 156KB
+# outweigh the 95KB of actual agent code in api/ and mislabel the repo as an
+# HTML project. Excluding the two shipped pages from detection makes the
+# language chip report JavaScript, which is what this repo actually is.
+#
+# These files are still versioned, diffed and reviewed as normal — this only
+# affects the language statistics GitHub displays.
+public/*.html linguist-detectable=false

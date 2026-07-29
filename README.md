@@ -1,5 +1,7 @@
 # JOSH · Your Career Transition Agent
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 An open-source, autonomous Claude Code agent that runs a real executive job
 search: it scrapes career pages daily, scores roles against your rubric,
 briefs you every morning, drafts follow-ups, and flags recruiter emails. All
